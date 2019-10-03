@@ -16,10 +16,15 @@ body {
     background-color: var(--bg-color);
 
     margin: 0;
-    padding: 0;
 
     width: 100vw;
     height: 100vh;
+
+    padding:
+            env(safe-area-inset-top, 50px)
+            env(safe-area-inset-right, 50px)
+            env(safe-area-inset-bottom, 50px)
+            env(SAFE-AREA-INSET-LEFT, 50px);
 
 }
 
