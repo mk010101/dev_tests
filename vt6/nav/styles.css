@@ -1,0 +1,54 @@
+:root {
+    --bg-color: #f9fcfc;
+    --fg-color: #36363b;
+}
+
+
+* {
+    box-sizing: border-box;
+}
+
+
+body {
+    font-family: Verdana, Arial, sans-serif;
+    font-size: 16px;
+    color: var(--fg-color);
+    background-color: var(--bg-color);
+
+    margin: 0;
+    padding: 0;
+
+    width: 100vw;
+    height: 100vh;
+
+}
+
+.app {
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.header {
+    height: 2rem;
+    background-color: #faebd7;
+    width: 100rem;
+}
+
+.footer {
+    height: 4rem;
+    position: fixed;
+    bottom: 0;
+    background: linear-gradient(rgba(255, 255, 255, 0), #ffffff);
+    width: 100rem;
+}
+
+
+
+.pages-container {
+    height: calc(100vh - 2rem);
+    overflow-y: auto;
+}
+
+
+
