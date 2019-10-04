@@ -30,5 +30,17 @@ function getPage(idNum) {
         </section>
     `;
 
+    let p = document.createElement("div");
+    p.classList.add("page");
+    p.innerHTML = str;
+    return p;
+
 }
+
+let p = getPage(0);
+
+document.querySelector(".pages-container").appendChild(p);
+
+
+
 
