@@ -20,18 +20,13 @@ body {
     width: 100vw;
     height: 100vh;
 
-    padding:
-            env(safe-area-inset-top, 50px)
-            env(safe-area-inset-right, 50px)
-            env(safe-area-inset-bottom, 50px)
-            env(SAFE-AREA-INSET-LEFT, 50px);
-
 }
 
 .app {
     width: 100vw;
     height: 100vh;
     overflow: hidden;
+    position: absolute;
 }
 
 .header {
@@ -52,7 +47,7 @@ body {
 
 .pages-container {
     height: calc(100vh - 2rem);
-    overflow-y: auto;
+    position: absolute;
 }
 
 
