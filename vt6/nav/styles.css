@@ -39,7 +39,7 @@ body {
     height: 2rem;
     position: fixed;
     bottom: 0;
-    background: linear-gradient(rgba(255, 255, 255, 0), #ffffff);
+    background: linear-gradient(rgba(255, 255, 255, 0), var(--bg-color));
     width: 100vw;
 }
 
