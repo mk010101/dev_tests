@@ -42,6 +42,7 @@ let p = getPage(0);
 document.querySelector(".pages-container").appendChild(p);
 
 
+
 //-------------------------------------------------------------------------------------------
 
 
@@ -50,7 +51,7 @@ class Touch {
     constructor(target) {
         //console.log('ontouchstart' in window)
 
-        //console.log("PointerEvent" in window)
+        console.log("PointerEvent" in window)
 
         this.target = target;
         this.init();
@@ -60,8 +61,8 @@ class Touch {
 
         this.pointerDown = this.pointerDown.bind(this);
 
-        //this.target.addEventListener("mousedown")
-        this.target.addEventListener("pointerdown", this.pointerDown)
+        this.target.addEventListener("pointerdown", this.pointerDown);
+        this.target.addEventListener("touchstart", this.pointerDown);
     }
 
     pointerDown(e) {
