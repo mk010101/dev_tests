@@ -17,7 +17,6 @@ for (let i = 0; i < 10; i++) {
 }
 
 
-
 function getPage(idNum) {
 
     let str = "";
@@ -25,7 +24,7 @@ function getPage(idNum) {
     let page = pages[idNum];
     str += `<h3>${page.title}</h3>
         <section class="page-content">
-            <div><img src="../assets/1.jpg" alt="Hello world!"></div>
+            <div><img src="../assets/1.jpg" alt="Hello world!" draggable="false"></div>
             <div>${page.text}</div>
         </section>
     `;
@@ -42,7 +41,6 @@ let p = getPage(0);
 document.querySelector(".pages-container").appendChild(p);
 
 
-
 //-------------------------------------------------------------------------------------------
 
 
@@ -51,26 +49,87 @@ class Touch {
     constructor(target) {
         //console.log('ontouchstart' in window)
 
-        console.log("PointerEvent" in window)
+        //console.log("PointerEvent" in window)
 
         this.target = target;
+        this.x0 = 0;
+        this.y0 = 0;
+        this._dist = 10;
         this.init();
     }
 
     init() {
 
-        this.pointerDown = this.pointerDown.bind(this);
+        this.mouseDown = this.mouseDown.bind(this);
+        this.mouseMove = this.mouseMove.bind(this);
+        this.mouseUp = this.mouseUp.bind(this);
 
-        this.target.addEventListener("pointerdown", this.pointerDown);
-        this.target.addEventListener("touchstart", this.pointerDown);
+
+        this.target.addEventListener("mousedown", this.mouseDown);
+        window.addEventListener("mouseup", this.mouseUp);
+
+        if ('ontouchstart' in window) {
+
+            this.touchStart = this.touchStart.bind(this);
+            this.touchMove = this.touchMove.bind(this);
+            this.touchEnd = this.touchEnd.bind(this);
+
+            this.target.addEventListener("touchstart", this.touchStart);
+            window.addEventListener("touchend", this.touchEnd);
+
+        }
+
+
     }
 
-    pointerDown(e) {
-        console.log(e)
+
+    mouseDown(e) {
+        this.x0 = e.clientX - this.target.getBoundingClientRect().left;
+        this.y0 = e.clientY;
+        this.target.addEventListener("mousemove", this.mouseMove);
+    }
+
+    mouseMove(e) {
+        let x = e.clientX - this.x0;
+        //let y = e.clientY - this.y0;
+        //console.log(x, y)
+        this.target.style.transform = `translateX(${x}px)`;
     }
 
 
+    mouseUp(e) {
+        this.target.removeEventListener("mousemove", this.mouseMove);
+    }
 
+
+    touchStart(e) {
+        if (e.touches.length > 1) return;
+        this.x0 = e.touches[0].clientX - this.target.getBoundingClientRect().left;
+        this.y0 = e.touches[0].clientY;
+        this.target.addEventListener("touchmove", this.touchMove);
+        //console.log(e)
+    }
+
+    touchMove(e) {
+        let x = e.touches[0].clientX - this.x0;
+        let y = e.touches[0].clientY - this.y0;
+
+       let xa = Math.abs(x);
+       let ya = Math.abs(y);
+
+       if (ya > this._dist && ya > xa) {
+           this.touchEnd(e);
+       } else if (xa > this._dist && xa > ya) {
+           this.target.style.transform = `translateX(${x}px)`;
+       }
+
+        //
+    }
+
+
+    touchEnd(e) {
+        this.target.removeEventListener("touchmove", this.touchMove);
+    }
 
 
 }

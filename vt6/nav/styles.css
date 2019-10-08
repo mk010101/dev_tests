@@ -52,6 +52,7 @@ body {
     height: calc(100vh - 2rem);
     position: absolute;
     top: 2rem;
+    touch-action: none;
 }
 
 .page {
@@ -62,6 +63,15 @@ body {
     overflow-x: hidden;
     padding: 1rem;
 }
+
+.no-scroll {
+
+}
+
+
+
+
+
 
 
 
