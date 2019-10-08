@@ -107,7 +107,7 @@ class Touch {
         if (e.touches.length > 1) return;
         this._x0 = e.touches[0].clientX - this.target.getBoundingClientRect().left;
         this._y0 = e.touches[0].clientY;
-        this.target.addEventListener("touchmove", this.touchMove);
+        this.target.addEventListener("touchmove", this.touchMove, {passive: false});
         //console.log(e)
     }
 
@@ -127,7 +127,7 @@ class Touch {
                 this.touchEnd(e);
             } else if (xa > this._dist && xa > ya) {
                 this._isSwiping = true;
-                console.log(Math.random())
+                document.querySelector(".page").classList.add("no-scroll");
             }
         } else {
             this.target.style.transform = `translateX(${x}px)`;
@@ -142,6 +142,7 @@ class Touch {
 
 
     touchEnd(e) {
+        document.querySelector(".page").classList.remove("no-scroll");
         this.target.removeEventListener("touchmove", this.touchMove);
         this._isSwiping = false;
     }
