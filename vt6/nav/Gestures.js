@@ -33,37 +33,51 @@ class Gestures extends Dispatcher {
     init() {
 
         for (let i = 0; i < this.options.gestures.length; i++) {
-           let g = this[this.options.gestures[i]];
-           if (g) this._gestures.push(this.options.gestures[i]);
+            let g = this[this.options.gestures[i]];
+            if (g) this._gestures.push(this.options.gestures[i]);
 
         }
 
-        this.mouseDown = this.mouseDown.bind(this);
+        this.pointerDown = this.pointerDown.bind(this);
         this.pointerMove = this.pointerMove.bind(this);
-        this.mouseUp = this.mouseUp.bind(this);
+        this.pointerUp = this.pointerUp.bind(this);
 
 
-        this.target.addEventListener("mousedown", this.mouseDown);
-        window.addEventListener("mouseup", this.mouseUp);
+        this.target.addEventListener("mousedown", this.pointerDown);
+        window.addEventListener("mouseup", this.pointerUp);
 
         if ('ontouchstart' in window) {
 
-            this.touchStart = this.touchStart.bind(this);
-            this.touchEnd = this.touchEnd.bind(this);
+            //this.touchStart = this.touchStart.bind(this);
+            //this.touchEnd = this.touchEnd.bind(this);
 
-            this.target.addEventListener("touchstart", this.touchStart);
-            window.addEventListener("touchend", this.touchEnd);
+            this.target.addEventListener("touchstart", this.pointerDown);
+            window.addEventListener("touchend", this.pointerUp);
 
         }
 
     }
 
 
-    mouseDown(e) {
+    pointerDown(e) {
         this._targetBB = this.target.getBoundingClientRect();
-        this._x0 = e.clientX - this._targetBB.left;
-        this._y0 = e.clientY - this._targetBB.top;
+
+        let clientX, clientY;
+
+        if (e.type.indexOf("touch") > -1) {
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+
+        }
+
+        this._x0 = clientX - this._targetBB.left;
+        this._y0 = clientY - this._targetBB.top;
+
         this.target.addEventListener("mousemove", this.pointerMove);
+        this.target.addEventListener("touchmove", this.pointerMove);
     }
 
     pointerMove(e) {
@@ -73,29 +87,15 @@ class Gestures extends Dispatcher {
     }
 
 
-    mouseUp(e) {
+    pointerUp(e) {
         document.querySelector(".page").classList.remove("no-scroll");
         this.target.removeEventListener("mousemove", this.pointerMove);
+        this.target.removeEventListener("touchmove", this.pointerMove);
         this._isSwiping = false;
 
     }
 
 
-    touchStart(e) {
-        this._targetBB = this.target.getBoundingClientRect();
-        this._x0 = e.touches[0].clientX - this._targetBB.left;
-        this._y0 = e.touches[0].clientY - this._targetBB.top;
-        this.target.addEventListener("touchmove", this.pointerMove, {passive: false});
-    }
-
-
-
-
-    touchEnd(e) {
-        document.querySelector(".page").classList.remove("no-scroll");
-        this.target.removeEventListener("touchmove", this.touchMove);
-        this._isSwiping = false;
-    }
 
 
     panX(e) {
@@ -124,7 +124,7 @@ class Gestures extends Dispatcher {
             //console.log(xa, ya)
 
             if (ya > this._detectPanDist && ya > xa) {
-                this.touchEnd(e);
+                this.pointerUp(e);
             } else if (xa > this._detectPanDist && xa > ya) {
                 this._isSwiping = true;
                 document.querySelector(".page").classList.add("no-scroll");
