@@ -6,6 +6,7 @@ export const GestureFuncs = {
 };
 export const GestureEvents = {
     PAN_X_START: "panXStart",
+    PAN_X_PROGRESS: "panXProgress",
     GESTURE_END: "end",
 };
 
@@ -186,6 +187,7 @@ class Gestures extends Dispatcher {
             }
         } else {
             this.target.style.transform = `translateX(${x}px)`;
+            this.dispatch(GestureEvents.PAN_X_PROGRESS, e);
         }
 
     }
