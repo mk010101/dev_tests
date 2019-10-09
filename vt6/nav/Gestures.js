@@ -62,7 +62,7 @@ class Gestures extends Dispatcher {
     mouseDown(e) {
         this._targetBB = this.target.getBoundingClientRect();
         this._x0 = e.clientX - this._targetBB.left;
-        this._y0 = e.clientY;
+        this._y0 = e.clientY - this._targetBB.top;
         this.target.addEventListener("mousemove", this.pointerMove);
     }
 
