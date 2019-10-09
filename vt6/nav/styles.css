@@ -53,7 +53,7 @@ body {
 
 
 .pages-container {
-    height: calc(100vh - 4rem);
+    height: calc(100vh - 2rem);
     position: absolute;
     top: 2rem;
     touch-action: none;
@@ -61,7 +61,7 @@ body {
 }
 
 .page {
-    height: calc(100vh - 4rem);
+    height: calc(100vh - 2rem);
     width: 100vw;
     position: absolute;
     overflow-y: auto;

@@ -48,7 +48,11 @@ document.querySelector(".pages-container").appendChild(p);
 
 
 
-new Gestures(document.querySelector(".pages-container"));
+const gest = new Gestures(document.querySelector(".pages-container"));
+
+gest.on("panXStart", (e)=> {
+    console.log("panXStart")
+});
 
 
 
