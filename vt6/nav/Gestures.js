@@ -67,7 +67,10 @@ class Gestures {
     touchMove(e) {
 
 
-        if (e.touches.length > 1) return;
+        if (e.touches.length > 1) {
+            e.preventDefault();
+            return;
+        }
 
         let x = e.touches[0].clientX - this._x0;
         let y = e.touches[0].clientY - this._y0;
