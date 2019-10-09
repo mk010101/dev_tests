@@ -16,6 +16,7 @@ class Dispatcher {
                 listener = listener.bind(scope);
             }
         }
+        return this;
     }
 
     off(evtName, listener) {
@@ -24,9 +25,12 @@ class Dispatcher {
             let index = this._listeners[evtName].indexOf(evtName);
             if (index > -1) this._listeners[evtName] = this._listeners[evtName].splice(index, 1);
         }
+        return this;
     }
 
     dispatch(evtName, data) {
+
+        if (!this._listeners[evtName]) return;
 
         for (let i = 0; i < this._listeners[evtName].length; i++) {
             this._listeners[evtName][i](data);

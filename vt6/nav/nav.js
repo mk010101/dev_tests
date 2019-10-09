@@ -1,4 +1,4 @@
-import {Gestures} from "./Gestures.js";
+import {Gestures, GestureFuncs, GestureEvents} from "./Gestures.js";
 
 window.addEventListener("resize", () => winResizeHandler());
 
@@ -46,16 +46,15 @@ document.querySelector(".pages-container").appendChild(p);
 //-------------------------------------------------------------------------------------------
 
 
-
-
 const gest = new Gestures(document.querySelector(".pages-container"));
 
-gest.on("panXStart", (e)=> {
-    console.log("panXStart")
-});
-
-
-
+gest
+    .on(GestureEvents.PAN_X_START, (e) => {
+        console.log("panXStart")
+    })
+    .on(GestureEvents.GESTURE_END, () => {
+        console.log("end")
+    });
 
 
 

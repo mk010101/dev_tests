@@ -1,6 +1,19 @@
 import {Dispatcher} from "../Dispatcher.js";
 import {debounce} from "../helpers.js";
 
+export const GestureFuncs = {
+    PAN_X: "panX"
+};
+export const GestureEvents = {
+    PAN_X_START: "panXStart",
+    GESTURE_END: "end",
+};
+
+Object.freeze(GestureFuncs);
+Object.freeze(GestureEvents);
+
+
+
 class Gestures extends Dispatcher {
 
 
@@ -136,7 +149,7 @@ class Gestures extends Dispatcher {
     }
 
     dispatchEnd(e) {
-
+        this.dispatch(GestureEvents.GESTURE_END, null);
     }
 
 
@@ -169,7 +182,7 @@ class Gestures extends Dispatcher {
             } else if (xa > this._detectPanDist && xa > ya) {
                 this._isPanningX = true;
                 document.querySelector(".page").classList.add("no-scroll");
-                this.dispatch("panXStart", e);
+                this.dispatch(GestureEvents.PAN_X_START, e);
             }
         } else {
             this.target.style.transform = `translateX(${x}px)`;
