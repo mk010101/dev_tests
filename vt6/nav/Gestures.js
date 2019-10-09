@@ -1,4 +1,5 @@
 import {Dispatcher} from "../Dispatcher.js";
+import {debounce} from "../helpers.js";
 
 class Gestures extends Dispatcher {
 
@@ -23,6 +24,7 @@ class Gestures extends Dispatcher {
         this._isPanningX = false;
         this._gestures = [];
         this._targetBB = null;
+        this._disabled = false;
 
 
         if (this.options.detectPanDist !== undefined) this._detectPanDist = this.options.detectPanDist;
@@ -43,6 +45,7 @@ class Gestures extends Dispatcher {
         this.pointerDown = this.pointerDown.bind(this);
         this.pointerMove = this.pointerMove.bind(this);
         this.pointerUp = this.pointerUp.bind(this);
+        this.dispatchEnd = this.dispatchEnd.bind(this);
 
 
         this.target.addEventListener("mousedown", this.pointerDown);
@@ -61,8 +64,17 @@ class Gestures extends Dispatcher {
         return this._speedX;
     }
 
+    get speedY() {
+        return this._speedY;
+    }
+
+    set disabled(bool) {
+        this._disabled = bool;
+    }
+
 
     pointerDown(e) {
+        if (this._disabled) return;
         this._targetBB = this.target.getBoundingClientRect();
 
         let clientX, clientY;
@@ -87,7 +99,7 @@ class Gestures extends Dispatcher {
     }
 
     pointerMove(e) {
-
+        if (this._disabled) return;
         let clientX, clientY;
 
         if (e.type.indexOf("touch") > -1) {
@@ -110,9 +122,11 @@ class Gestures extends Dispatcher {
 
 
     pointerUp(e) {
+        if (this._disabled) return;
         this.removeMoveListeners();
         document.querySelector(".page").classList.remove("no-scroll");
-        console.log(e)
+        //console.log(e)
+        debounce(this.dispatchEnd, 100);
     }
 
     removeMoveListeners() {
@@ -121,7 +135,9 @@ class Gestures extends Dispatcher {
         this._isPanningX = false;
     }
 
+    dispatchEnd(e) {
 
+    }
 
 
     panX(e) {
