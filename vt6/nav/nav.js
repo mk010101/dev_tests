@@ -1,12 +1,6 @@
 import {Shifter} from "./Shifter.js";
 
-window.addEventListener("resize", () => winResizeHandler());
 
-function winResizeHandler() {
-    //document.body.height = window.innerHeight;
-}
-
-winResizeHandler();
 
 
 let pages = [];
@@ -52,7 +46,7 @@ gest
     .on(Shifter.Events.PAN_X_START, (e) => {
         //console.log("panXStart")
     })
-    .on(Shifter.Events.GESTURE_END, () => {
+    .on(Shifter.Events.END, () => {
         //console.log("end")
     });
 

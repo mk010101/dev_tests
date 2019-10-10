@@ -54,7 +54,6 @@ class Shifter extends Dispatcher {
             if (this[funcStr]) {
                 this._gestures.push(funcStr);
             }
-
         }
 
         this._pointerDown = this._pointerDown.bind(this);
@@ -108,17 +107,9 @@ class Shifter extends Dispatcher {
             clientX = e.touches[0].clientX;
             clientY = e.touches[0].clientY;
 
-            if (e.touches.length === 2) {
-                this._x0zoom = clientX;
-                this._y0zoom = clientY;
-                this._x1zoom = e.touches[1].clientX;
-                this._y1zoom = e.touches[1].clientY;
-            }
-
         } else {
             clientX = e.clientX;
             clientY = e.clientY;
-
         }
 
 
@@ -130,6 +121,8 @@ class Shifter extends Dispatcher {
 
         this._target.addEventListener("mousemove", this._pointerMove);
         this._target.addEventListener("touchmove", this._pointerMove);
+
+        this.dispatch(Shifter.Events.START, e);
     }
 
     _pointerMove(e) {
@@ -153,16 +146,14 @@ class Shifter extends Dispatcher {
             this[this._gestures[i]](e);
         }
 
-        this.dispatch(Shifter.Events.GESTURE_MOVE, e);
+        this.dispatch(Shifter.Events.MOVE, e);
     }
 
 
     _pointerUp(e) {
         if (this._disabled) return;
         this._removeMoveListeners();
-
         document.querySelector(".page").classList.remove("no-scroll");
-        //console.log(e)
         debounce(this._dispatchEnd, 100);
     }
 
@@ -173,7 +164,7 @@ class Shifter extends Dispatcher {
     }
 
     _dispatchEnd(e) {
-        this.dispatch(Shifter.Events.GESTURE_END, null);
+        this.dispatch(Shifter.Events.END, null);
     }
 
 
@@ -264,9 +255,9 @@ Shifter.Events = {
     PAN_X_PROGRESS: "panXProgress",
     PAN_START: "panStart",
     PAN_PROGRESS: "panProgress",
-    GESTURE_START: "start",
-    GESTURE_MOVE: "move",
-    GESTURE_END: "end",
+    START: "start",
+    MOVE: "move",
+    END: "end",
 };
 
 Object.freeze(Shifter.Events);
