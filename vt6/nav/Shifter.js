@@ -2,7 +2,6 @@ import {Dispatcher} from "../Dispatcher.js";
 import {debounce} from "../helpers.js";
 
 
-
 class Shifter extends Dispatcher {
 
 
@@ -153,6 +152,8 @@ class Shifter extends Dispatcher {
         for (let i = 0; i < this._gestures.length; i++) {
             this[this._gestures[i]](e);
         }
+
+        this.dispatch(Shifter.Events.GESTURE_MOVE, e);
     }
 
 
@@ -226,6 +227,7 @@ class Shifter extends Dispatcher {
     zoom(e) {
 
         if (e.type.indexOf("touch") > -1 && e.touches.length === 2) {
+
             let x0 = e.touches[0].clientX;
             let x1 = e.touches[1].clientX;
             let y0 = e.touches[0].clientY;
@@ -238,12 +240,9 @@ class Shifter extends Dispatcher {
                 this._targetScale -= this._pinchSpeed;
             }
             this._pinchDist0 = dist;
-
-
             this._applyTransforms();
-            //e.preventDefault();
         }
-        //console.log(e);
+
     }
 
 
@@ -251,7 +250,6 @@ class Shifter extends Dispatcher {
         this._target.style.transform = `
         translate(${this._targetX}px, ${this._targetY}px) 
         scale(${this._targetScale}, ${this._targetScale})`;
-        //console.log(this._target.style.transform)
     }
 
 
@@ -264,8 +262,14 @@ Shifter.Funcs = {
 Shifter.Events = {
     PAN_X_START: "panXStart",
     PAN_X_PROGRESS: "panXProgress",
+    PAN_START: "panStart",
+    PAN_PROGRESS: "panProgress",
     GESTURE_START: "start",
+    GESTURE_MOVE: "move",
     GESTURE_END: "end",
 };
+
+Object.freeze(Shifter.Events);
+Object.freeze(Shifter.Funcs);
 
 export {Shifter}

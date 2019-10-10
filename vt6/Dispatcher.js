@@ -22,7 +22,7 @@ class Dispatcher {
     off(evtName, listener) {
 
         if (this._listeners[evtName]) {
-            let index = this._listeners[evtName].indexOf(evtName);
+            let index = this._listeners[evtName].indexOf(listener);
             if (index > -1) this._listeners[evtName] = this._listeners[evtName].splice(index, 1);
         }
         return this;

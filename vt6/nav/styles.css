@@ -51,7 +51,6 @@ body {
 }
 
 
-
 .pages-container {
     height: calc(100vh - 2rem);
     position: absolute;
@@ -71,8 +70,6 @@ body {
 }
 
 
-
-
 .no-pointer-evt * {
     pointer-events: none;
 }
@@ -82,10 +79,15 @@ body {
 }
 
 
-@media screen and (max-width: 800px){
+@media screen and (max-width: 750px) {
 
     img {
         max-width: 100vw;
+    }
+
+    .sticky {
+        position: sticky;
+        top: 0;
     }
 
 }
