@@ -1,17 +1,6 @@
 import {Dispatcher} from "../Dispatcher.js";
 import {debounce} from "../helpers.js";
 
-export const GestureFuncs = {
-    PAN_X: "panX"
-};
-export const GestureEvents = {
-    PAN_X_START: "panXStart",
-    PAN_X_PROGRESS: "panXProgress",
-    GESTURE_END: "end",
-};
-
-Object.freeze(GestureFuncs);
-Object.freeze(GestureEvents);
 
 
 class Shifter extends Dispatcher {
@@ -183,7 +172,7 @@ class Shifter extends Dispatcher {
     }
 
     _dispatchEnd(e) {
-        this.dispatch(GestureEvents.GESTURE_END, null);
+        this.dispatch(Shifter.Events.GESTURE_END, null);
     }
 
 
@@ -224,12 +213,12 @@ class Shifter extends Dispatcher {
             } else if (xa > this._detectPanDist && xa > ya) {
                 this._isPanningX = true;
                 document.querySelector(".page").classList.add("no-scroll");
-                this.dispatch(GestureEvents.PAN_X_START, e);
+                this.dispatch(Shifter.Events.PAN_X_START, e);
             }
         } else {
             this._targetX = x;
             this._applyTransforms();
-            this.dispatch(GestureEvents.PAN_X_PROGRESS, e);
+            this.dispatch(Shifter.Events.PAN_X_PROGRESS, e);
         }
 
     }
@@ -267,5 +256,16 @@ class Shifter extends Dispatcher {
 
 
 }
+
+Shifter.Funcs = {
+    PAN_X: "panX"
+};
+
+Shifter.Events = {
+    PAN_X_START: "panXStart",
+    PAN_X_PROGRESS: "panXProgress",
+    GESTURE_START: "start",
+    GESTURE_END: "end",
+};
 
 export {Shifter}
