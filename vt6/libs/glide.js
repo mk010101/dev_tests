@@ -1903,7 +1903,7 @@
             let items = Glide._ticker.items;
             for (let i = 0; i < items.length; i++) {
                 let obj = items[i];
-                if (obj.target && obj.target === target) {
+                if (obj._target && obj._target === target) {
                     arr.push(obj);
                 }
             }

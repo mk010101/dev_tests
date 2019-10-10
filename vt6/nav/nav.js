@@ -1,4 +1,4 @@
-import {Gestures, GestureFuncs, GestureEvents} from "./Gestures.js";
+import {Shifter, GestureFuncs, GestureEvents} from "./Shifter.js";
 
 window.addEventListener("resize", () => winResizeHandler());
 
@@ -46,14 +46,14 @@ document.querySelector(".pages-container").appendChild(p);
 //-------------------------------------------------------------------------------------------
 
 
-const gest = new Gestures(document.querySelector(".pages-container"));
+const gest = new Shifter(document.querySelector(".pages-container"));
 
 gest
     .on(GestureEvents.PAN_X_START, (e) => {
-        console.log("panXStart")
+        //console.log("panXStart")
     })
     .on(GestureEvents.GESTURE_END, () => {
-        console.log("end")
+        //console.log("end")
     });
 
 

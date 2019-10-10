@@ -70,9 +70,17 @@ body {
     touch-action: pan-x pan-y;
 }
 
+
+
+
+.no-pointer-evt * {
+    pointer-events: none;
+}
+
 .no-scroll {
     overflow-y: hidden;
 }
+
 
 @media screen and (max-width: 800px){
 
@@ -83,9 +91,11 @@ body {
 }
 
 
+/*-----------------------------------*/
 
-
-
+p {
+    padding: 1rem;
+}
 
 
 
