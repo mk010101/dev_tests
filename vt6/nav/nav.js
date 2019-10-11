@@ -55,15 +55,12 @@ document.querySelector(".pages-container").appendChild(p);
 
 
 //const gest = new Shifter(document.querySelector(".pages-container"), [Shifter.Funcs.PAN_X]);
-const gest = new Shifter(document.querySelector(".page"), [Shifter.Funcs.PAN, Shifter.Funcs.ZOOM]);
+const gest = new Shifter(document.querySelector(".page"), [Shifter.Funcs.PAN_X, Shifter.Funcs.ZOOM]);
 
-gest
-    .on(Shifter.Events.PAN_X_START, (e) => {
+gest.on(Shifter.Events.PAN_X_START, (e) => {
+    //gest.remove();
+});
 
-    })
-    .on(Shifter.Events.END, () => {
-
-    });
 
 
 

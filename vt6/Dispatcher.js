@@ -25,6 +25,12 @@ class Dispatcher {
         return this;
     }
 
+    offAll() {
+        for (let p in this._listeners) {
+            this._listeners[p] = [];
+        }
+    }
+
     dispatch(evtName, data) {
 
         if (!this._listeners[evtName]) return;

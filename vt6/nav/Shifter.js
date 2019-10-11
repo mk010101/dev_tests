@@ -10,7 +10,6 @@ class Shifter extends Dispatcher {
         super();
 
 
-
         this._target = target;
         this._gestures = [];
         this._disabled = false;
@@ -39,7 +38,6 @@ class Shifter extends Dispatcher {
 
         // CSS
         this._cssNoScroll = "__Shifter__no-scroll_027345234523";
-
 
 
         this.init(funcs);
@@ -72,13 +70,7 @@ class Shifter extends Dispatcher {
 
         }
 
-        let existingNoScroll = document.getElementById(this._cssNoScroll);
-        if (! existingNoScroll) {
-            let style = document.createElement('style');
-            style.id = this._cssNoScroll;
-            style.innerHTML = `.${this._cssNoScroll} * { overflow: hidden }`;
-            document.getElementsByTagName('head')[0].appendChild(style);
-        }
+        this._addCSS();
 
 
     }
@@ -110,6 +102,19 @@ class Shifter extends Dispatcher {
 
     set zoomSpeed(value) {
         this._zoomSpeed = value;
+    }
+
+    remove(keepCSS = true) {
+        this._target.removeEventListener("mousemove", this._pointerMove);
+        this._target.removeEventListener("touchmove", this._pointerMove);
+        this._target.removeEventListener("mousedown", this._pointerDown);
+        this._target.removeEventListener("touchstart", this._pointerDown);
+        window.removeEventListener("mouseup", this._pointerUp);
+        window.removeEventListener("touchend", this._pointerUp);
+        this._target.classList.remove(this._cssNoScroll);
+        this._target = null;
+        this.offAll();
+        if (!keepCSS) this._removeCSS();
     }
 
     /* =================================================================================================================
@@ -286,6 +291,26 @@ class Shifter extends Dispatcher {
         this._target.style.transform = `
         translate(${this._targetX}px, ${this._targetY}px) 
         scale(${this._targetScale}, ${this._targetScale})`;
+    }
+
+
+    _addCSS() {
+
+        let existingNoScroll = document.getElementById(this._cssNoScroll);
+        if (!existingNoScroll) {
+            let style = document.createElement('style');
+            style.id = this._cssNoScroll;
+            style.innerHTML = `.${this._cssNoScroll} * { overflow: hidden }`;
+            document.getElementsByTagName('head')[0].appendChild(style);
+        }
+    }
+
+    _removeCSS() {
+
+        let existingNoScroll = document.getElementById(this._cssNoScroll);
+        if (existingNoScroll) {
+            document.getElementsByTagName('head')[0].removeChild(existingNoScroll);
+        }
     }
 
 
