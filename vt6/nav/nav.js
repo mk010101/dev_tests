@@ -27,6 +27,12 @@ for (let i = 0; i < 10; i++) {
 }
 
 
+const pContainer = document.querySelector(".pages-container");
+
+let currentPage;
+let panPages = [];
+
+
 function getPage(idNum) {
 
     let str = "";
@@ -40,27 +46,55 @@ function getPage(idNum) {
     `;
 
     let p = document.createElement("div");
+    p.setAttribute("data-id", idNum);
     p.classList.add("page");
     p.innerHTML = str;
     return p;
+}
+
+
+function insertPage(page) {
+
+    let lastPage = panPages[panPages.length-1];
+
+    let lastId =parseInt(lastPage.getAttribute("data-id"));
+    let newId =parseInt(page.getAttribute("data-id"));
+    if (newId > lastId) {
+        let bb = lastPage.getBoundingClientRect();
+        page.style.transform = `translateX(${bb.right + 50}px)`;
+        //page.style.left = `${bb.right + 50}px`;
+        pContainer.appendChild(page);
+        panPages.push(page)
+    }
+
 
 }
 
-let p = getPage(0);
 
-document.querySelector(".pages-container").appendChild(p);
+
+
+let p = getPage(0);
+pContainer.appendChild(p);
+currentPage = p;
+panPages.push(p);
+
+
+insertPage(getPage(1));
+insertPage(getPage(2));
+insertPage(getPage(3));
+
 
 
 //-------------------------------------------------------------------------------------------
 
 
-//const gest = new Shifter(document.querySelector(".pages-container"), [Shifter.Funcs.PAN_X]);
-const gest = new Shifter(document.querySelector(".page"), [Shifter.Funcs.PAN_X, Shifter.Funcs.ZOOM]);
+
+const gest = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
+
 
 gest.on(Shifter.Events.PAN_X_START, (e) => {
     //gest.remove();
 });
-
 
 
 
