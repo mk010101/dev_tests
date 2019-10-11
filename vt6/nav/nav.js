@@ -54,7 +54,9 @@ document.querySelector(".pages-container").appendChild(p);
 //-------------------------------------------------------------------------------------------
 
 
-const gest = new Shifter(document.querySelector(".pages-container"));
+const gest = new Shifter(document.querySelector(".page"), {
+    gestures: [Shifter.Funcs.PAN, Shifter.Funcs.SCALE]
+});
 
 gest
     .on(Shifter.Events.PAN_X_START, (e) => {

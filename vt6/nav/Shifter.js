@@ -16,7 +16,6 @@ class Shifter extends Dispatcher {
 
         this._target = target;
         this._gestures = [];
-        this._targetBB = null;
         this._disabled = false;
 
         // Target transforms -------------
@@ -27,17 +26,18 @@ class Shifter extends Dispatcher {
 
 
         this._pinchDist0 = 0;
-        this._pinchSpeed = 0.01;
+        this._pinchSpeed = 0.025;
 
         this._speedX0 = 0;
         this._speedX = 0;
         this._speedY0 = 0;
         this._speedY = 0;
 
-        this._x0pan = 0;
-        this._y0pan = 0;
+        this._panX0 = 0;
+        this._panY0 = 0;
         this._detectPanDist = 10;
         this._isPanningX = false;
+
 
 
         if (this.options.detectPanDist !== undefined) this._detectPanDist = this.options.detectPanDist;
@@ -71,6 +71,8 @@ class Shifter extends Dispatcher {
             window.addEventListener("touchend", this._pointerUp);
 
         }
+
+        this._initTargBox = this._target.getBoundingClientRect();
 
     }
 
@@ -116,8 +118,8 @@ class Shifter extends Dispatcher {
         this._speedX0 = clientX;
         this._speedY0 = clientY;
 
-        this._x0pan = clientX - this._targetBB.left;
-        this._y0pan = clientY - this._targetBB.top;
+        this._panX0 = clientX - this._targetX;
+        this._panY0 = clientY - this._targetY;
 
         this._target.addEventListener("mousemove", this._pointerMove);
         this._target.addEventListener("touchmove", this._pointerMove);
@@ -191,8 +193,8 @@ class Shifter extends Dispatcher {
         }
 
 
-        let x = clientX - this._x0pan;
-        let y = clientY - this._y0pan - this._targetBB.top;
+        let x = clientX - this._panX0;
+        let y = clientY - this._panY0;
 
 
         if (!this._isPanningX) {
@@ -215,10 +217,33 @@ class Shifter extends Dispatcher {
 
     }
 
-    zoom(e) {
+    pan(e) {
+        let clientX, clientY;
+        if (e.type === "touchmove") {
+            if (e.touches.length > 1) {
+                e.preventDefault();
+                return;
+            }
+            clientX = e.touches[0].clientX;
+            clientY = e.touches[0].clientY;
+        } else {
+            clientX = e.clientX;
+            clientY = e.clientY;
+        }
+
+
+        let x = clientX - this._panX0;
+        let y = clientY - this._panY0;
+
+        this._targetX = x;
+        this._targetY = y;
+        this._applyTransforms();
+
+    }
+
+    scale(e) {
 
         if (e.type.indexOf("touch") > -1 && e.touches.length === 2) {
-
             let x0 = e.touches[0].clientX;
             let x1 = e.touches[1].clientX;
             let y0 = e.touches[0].clientY;
@@ -247,7 +272,10 @@ class Shifter extends Dispatcher {
 }
 
 Shifter.Funcs = {
-    PAN_X: "panX"
+    PAN_X: "panX",
+    PAN: "pan",
+    SCALE: "scale"
+
 };
 
 Shifter.Events = {
