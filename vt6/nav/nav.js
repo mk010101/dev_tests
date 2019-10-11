@@ -55,17 +55,24 @@ function getPage(idNum) {
 
 function insertPage(page) {
 
-    let lastPage = panPages[panPages.length-1];
+    //let lastPage = panPages[panPages.length-1];
 
-    let lastId =parseInt(lastPage.getAttribute("data-id"));
+    let curId =parseInt(currentPage.getAttribute("data-id"));
     let newId =parseInt(page.getAttribute("data-id"));
-    if (newId > lastId) {
-        let bb = lastPage.getBoundingClientRect();
+    let bb = currentPage.getBoundingClientRect();
+
+    if (newId > curId) {
         page.style.transform = `translateX(${bb.right + 50}px)`;
-        //page.style.left = `${bb.right + 50}px`;
+        pContainer.appendChild(page);
+        panPages.push(page)
+    } else {
+        let bb = pContainer.getBoundingClientRect();
+        page.style.transform = `translateX(${bb.left - bb.width - 50}px)`;
         pContainer.appendChild(page);
         panPages.push(page)
     }
+
+    currentPage = page;
 
 
 }
@@ -80,8 +87,8 @@ panPages.push(p);
 
 
 insertPage(getPage(1));
-insertPage(getPage(2));
 insertPage(getPage(3));
+//insertPage(getPage(2));
 
 
 
