@@ -7,14 +7,11 @@ class Dispatcher {
 
 
 
-    on(evtName, listener, scope = null) {
+    on(evtName, listener) {
 
         if (! this._listeners[evtName]) this._listeners[evtName] = [];
         if (this._listeners[evtName].indexOf(listener) === -1) {
             this._listeners[evtName].push(listener);
-            if (scope) {
-                listener = listener.bind(scope);
-            }
         }
         return this;
     }

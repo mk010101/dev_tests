@@ -5,13 +5,10 @@ import {debounce} from "../helpers.js";
 class Shifter extends Dispatcher {
 
 
-    constructor(target, options) {
+    constructor(target, funcs) {
 
         super();
 
-        this.options = options || {
-            gestures: ["panX"]
-        };
 
 
         this._target = target;
@@ -26,7 +23,9 @@ class Shifter extends Dispatcher {
 
 
         this._pinchDist0 = 0;
-        this._pinchSpeed = 0.025;
+        this._zoomSpeed = 0.025;
+        this._minZoom = .5;
+        this._maxZoom = 2;
 
         this._speedX0 = 0;
         this._speedX = 0;
@@ -43,17 +42,15 @@ class Shifter extends Dispatcher {
 
 
 
-        if (this.options.detectPanDist !== undefined) this._detectPanDist = this.options.detectPanDist;
-
-        this.init();
+        this.init(funcs);
 
 
     }
 
-    init() {
+    init(funcs) {
 
-        for (let i = 0; i < this.options.gestures.length; i++) {
-            let funcStr = this.options.gestures[i];
+        for (let i = 0; i < funcs.length; i++) {
+            let funcStr = funcs[i];
             if (this[funcStr]) {
                 this._gestures.push(funcStr);
             }
@@ -101,6 +98,18 @@ class Shifter extends Dispatcher {
 
     set disabled(bool) {
         this._disabled = bool;
+    }
+
+    set minZoom(value) {
+        this._minZoom = value;
+    }
+
+    set maxZoom(value) {
+        this._maxZoom = value;
+    }
+
+    set zoomSpeed(value) {
+        this._zoomSpeed = value;
     }
 
     /* =================================================================================================================
@@ -252,7 +261,7 @@ class Shifter extends Dispatcher {
 
     }
 
-    scale(e) {
+    zoom(e) {
 
         if (e.type.indexOf("touch") > -1 && e.touches.length === 2) {
             let x0 = e.touches[0].clientX;
@@ -261,10 +270,10 @@ class Shifter extends Dispatcher {
             let y1 = e.touches[1].clientY;
             let dist = Math.sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
 
-            if (dist > this._pinchDist0) {
-                this._targetScale += this._pinchSpeed;
-            } else if (dist < this._pinchDist0) {
-                this._targetScale -= this._pinchSpeed;
+            if (dist > this._pinchDist0 && this._targetScale <= this._maxZoom) {
+                this._targetScale += this._zoomSpeed;
+            } else if (dist < this._pinchDist0 && this._targetScale >= this._minZoom) {
+                this._targetScale -= this._zoomSpeed;
             }
             this._pinchDist0 = dist;
             this._applyTransforms();
@@ -285,7 +294,7 @@ class Shifter extends Dispatcher {
 Shifter.Funcs = {
     PAN_X: "panX",
     PAN: "pan",
-    SCALE: "scale"
+    ZOOM: "zoom"
 
 };
 
