@@ -39,6 +39,7 @@ body {
     position: fixed;
     top: 0;
     z-index: 100;
+    opacity: .3;
 }
 
 .footer {
@@ -63,16 +64,14 @@ body {
     height: calc(100vh - 2rem);
     width: 100vw;
     position: absolute;
-    overflow-y: hidden;
+    overflow-y: auto;
     overflow-x: hidden;
     padding: 0;
     touch-action: pan-x pan-y;
+    background-color: var(--bg-color);
 }
 
 
-.no-pointer-evt * {
-    pointer-events: none;
-}
 
 .no-scroll {
     overflow-y: hidden;

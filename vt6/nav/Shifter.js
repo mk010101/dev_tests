@@ -38,6 +38,9 @@ class Shifter extends Dispatcher {
         this._detectPanDist = 10;
         this._isPanningX = false;
 
+        // CSS
+        this._cssNoScroll = "__Shifter__no-scroll_027345234523";
+
 
 
         if (this.options.detectPanDist !== undefined) this._detectPanDist = this.options.detectPanDist;
@@ -72,7 +75,14 @@ class Shifter extends Dispatcher {
 
         }
 
-        this._initTargBox = this._target.getBoundingClientRect();
+        let existingNoScroll = document.getElementById(this._cssNoScroll);
+        if (! existingNoScroll) {
+            let style = document.createElement('style');
+            style.id = this._cssNoScroll;
+            style.innerHTML = `.${this._cssNoScroll} * { overflow: hidden }`;
+            document.getElementsByTagName('head')[0].appendChild(style);
+        }
+
 
     }
 
@@ -100,7 +110,6 @@ class Shifter extends Dispatcher {
 
     _pointerDown(e) {
         if (this._disabled) return;
-        this._targetBB = this._target.getBoundingClientRect();
 
         let clientX, clientY;
 
@@ -125,6 +134,7 @@ class Shifter extends Dispatcher {
         this._target.addEventListener("touchmove", this._pointerMove);
 
         this.dispatch(Shifter.Events.START, e);
+
     }
 
     _pointerMove(e) {
@@ -155,7 +165,7 @@ class Shifter extends Dispatcher {
     _pointerUp(e) {
         if (this._disabled) return;
         this._removeMoveListeners();
-        document.querySelector(".page").classList.remove("no-scroll");
+        this._target.classList.remove(this._cssNoScroll);
         debounce(this._dispatchEnd, 100);
     }
 
@@ -206,7 +216,8 @@ class Shifter extends Dispatcher {
                 this._removeMoveListeners();
             } else if (xa > this._detectPanDist && xa > ya) {
                 this._isPanningX = true;
-                document.querySelector(".page").classList.add("no-scroll");
+                //document.querySelector(".page").classList.add("no-scroll");
+                this._target.classList.add(this._cssNoScroll);
                 this.dispatch(Shifter.Events.PAN_X_START, e);
             }
         } else {
