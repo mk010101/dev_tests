@@ -73,12 +73,6 @@ class Shifter extends Dispatcher {
 
         this._addCSS();
 
-        //*
-        //this._target.setAttribute("draggable", "false");
-        this._target.addEventListener("pointerup", (e)=> {
-            console.log(e)
-        })
-         //*/
     }
 
 
