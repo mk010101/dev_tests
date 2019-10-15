@@ -73,7 +73,7 @@ class Shifter extends Dispatcher {
 
         this._addCSS();
 
-        /*
+        //*
         //this._target.setAttribute("draggable", "false");
         this._target.addEventListener("pointerup", (e)=> {
             console.log(e)
@@ -164,9 +164,6 @@ class Shifter extends Dispatcher {
 
         this._getTransforms();
 
-        //this._speedX = 0;
-        //this._speedY = 0;
-
         this._speedX0 = clientX;
         this._speedY0 = clientY;
 
@@ -179,7 +176,7 @@ class Shifter extends Dispatcher {
 
         this.dispatch(Shifter.Events.START, e);
 
-        console.log(e)
+        //console.log(e)
 
     }
 
