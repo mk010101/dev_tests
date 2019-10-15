@@ -4,7 +4,7 @@ import {Shifter} from "./Shifter.js";
 let pages = [];
 for (let i = 0; i < 10; i++) {
     let page = {
-        title: "Page Title" + (i + 1),
+        title: "Page Title: " + (i),
         text: `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
             Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took 
             a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, 
@@ -86,23 +86,32 @@ currentPage = p;
 panPages.push(p);
 
 
-insertPage(getPage(1));
+insertPage(getPage(2));
 insertPage(getPage(3));
-//insertPage(getPage(2));
+insertPage(getPage(4));
+
 
 
 
 //-------------------------------------------------------------------------------------------
 
+glide.useComputedStyle = true;
 
 
 const gest = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
 
 
 gest.on(Shifter.Events.PAN_X_START, (e) => {
-    //gest.remove();
+    //console.log(gest.speedX)
 });
 
+gest.on(Shifter.Events.END, ()=> {
+    //console.log(gest.speedX)
+    if (gest.speedX > 0) {
+        //glide.to(pContainer, 300, {t: {x: "300px", y:0}}, {ease:glide.Ease.quadOut});
+        console.log(gest.speedX )
+    }
+});
 
 
 
