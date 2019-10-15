@@ -80,6 +80,18 @@ class Shifter extends Dispatcher {
         return this._speedY;
     }
 
+    get targetX() {
+        return this._targetX;
+    }
+
+    get targetY() {
+        return this._targetY;
+    }
+
+    get targetScale() {
+        return this._targetScale;
+    }
+
 
     get disabled() {
         return this._disabled;

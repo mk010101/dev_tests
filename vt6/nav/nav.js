@@ -107,8 +107,8 @@ gest.on(Shifter.Events.PAN_X_START, (e) => {
 
 gest.on(Shifter.Events.END, ()=> {
     //console.log(gest.speedX)
-    if (gest.speedX > 0) {
-        //glide.to(pContainer, 300, {t: {x: "300px", y:0}}, {ease:glide.Ease.quadOut});
+    if (gest.speedX > 3) {
+        glide.to(pContainer, 300, {t: {x: [gest.targetX, 300]}}, {ease:glide.Ease.quadOut});
         console.log(gest.speedX )
     }
 });
