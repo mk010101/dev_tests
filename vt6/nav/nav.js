@@ -98,18 +98,26 @@ insertPage(getPage(4));
 glide.useComputedStyle = true;
 
 
+let panStarted = false;
 const gest = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
 
 
 gest.on(Shifter.Events.PAN_X_START, (e) => {
-    //console.log(gest.speedX)
+    panStarted = true;
+});
+
+gest.on(Shifter.Events.START, (e) => {
+    //console.log(panStarted)
+    if(panStarted) {
+        glide.remove(pContainer);
+    }
 });
 
 gest.on(Shifter.Events.END, ()=> {
-    //console.log(gest.speedX)
-    if (gest.speedX > 3) {
-        glide.to(pContainer, 300, {t: {x: [gest.targetX, 300]}}, {ease:glide.Ease.quadOut});
-        console.log(gest.speedX )
+
+    if ( panStarted && gest.speedX > 10) {
+        //console.log(gest.speedX, panStarted)
+        glide.to(pContainer, 400, {t: {x: [gest.targetX, 300]}}, {ease:glide.Ease.quadOut});
     }
 });
 
