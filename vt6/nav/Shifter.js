@@ -35,6 +35,8 @@ class Shifter extends Dispatcher {
         this._detectPanDist = 10;
         this._isPanningX = false;
 
+        this._isEvtTouch = false;
+
         // CSS
         this._cssNoScroll = "__Shifter__no-scroll_2019-15";
 
@@ -71,7 +73,7 @@ class Shifter extends Dispatcher {
 
         this._addCSS();
 
-        //*
+        /*
         //this._target.setAttribute("draggable", "false");
         this._target.addEventListener("pointerup", (e)=> {
             console.log(e)
@@ -101,7 +103,6 @@ class Shifter extends Dispatcher {
             ;
     }
 
-
     get disabled() {
         return this._disabled;
     }
@@ -120,6 +121,10 @@ class Shifter extends Dispatcher {
 
     set zoomSpeed(value) {
         this._zoomSpeed = value;
+    }
+
+    updateTransforms() {
+        this._getTransforms();
     }
 
     remove(keepCSS = true) {
@@ -145,7 +150,9 @@ class Shifter extends Dispatcher {
 
         let clientX, clientY;
 
-        if (e.type.indexOf("touch") > -1) {
+        this._isEvtTouch = e.type.indexOf("touch") > -1;
+
+        if (this._isEvtTouch) {
 
             clientX = e.touches[0].clientX;
             clientY = e.touches[0].clientY;
@@ -171,6 +178,8 @@ class Shifter extends Dispatcher {
         this._target.addEventListener("touchmove", this._pointerMove);
 
         this.dispatch(Shifter.Events.START, e);
+
+        console.log(e)
 
     }
 

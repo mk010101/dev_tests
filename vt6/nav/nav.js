@@ -28,6 +28,7 @@ for (let i = 0; i < 10; i++) {
 
 
 const pContainer = document.querySelector(".pages-container");
+const gap = 50;
 
 let currentPage;
 let panPages = [];
@@ -62,12 +63,12 @@ function insertPage(page) {
     let bb = currentPage.getBoundingClientRect();
 
     if (newId > curId) {
-        page.style.transform = `translateX(${bb.right + 50}px)`;
+        page.style.transform = `translateX(${bb.right + gap}px)`;
         pContainer.appendChild(page);
         panPages.push(page)
     } else {
         let bb = pContainer.getBoundingClientRect();
-        page.style.transform = `translateX(${bb.left - bb.width - 50}px)`;
+        page.style.transform = `translateX(${bb.left - bb.width - gap}px)`;
         pContainer.appendChild(page);
         panPages.push(page)
     }
@@ -115,9 +116,9 @@ gest.on(Shifter.Events.START, (e) => {
 
 gest.on(Shifter.Events.END, ()=> {
 
-    if ( panStarted && gest.speedX > 10) {
+    if ( panStarted && gest.speedX < -10) {
         //console.log(gest.speedX, panStarted)
-        glide.to(pContainer, 400, {t: {x: [gest.targetX, 300]}}, {ease:glide.Ease.quadOut});
+        glide.to(pContainer, 400, {t: {x: [gest.targetX, -window.innerWidth - gap]}}, {ease:glide.Ease.quadOut});
     }
 });
 
