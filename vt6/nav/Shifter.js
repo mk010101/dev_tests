@@ -267,7 +267,6 @@ class Shifter extends Dispatcher {
 
             let xa = Math.abs(x - this._targetX);
             let ya = Math.abs(y);
-            console.log(xa, ya)
 
             if (ya > this._detectPanDist && ya > xa) {
                 this._removeMoveListeners();
@@ -360,11 +359,11 @@ class Shifter extends Dispatcher {
     }
 
     _lockScroll() {
-        //this._target.classList.add(this._cssNoScroll);
+        this._target.classList.add(this._cssNoScroll);
     }
 
     _unlockScroll() {
-        //this._target.classList.remove(this._cssNoScroll);
+        this._target.classList.remove(this._cssNoScroll);
     }
 
 
