@@ -35,7 +35,8 @@ class Shifter extends Dispatcher {
         this._detectPanDist = 10;
         this._isPanningX = false;
 
-        this._isEvtTouch = false;
+        this._isPassive = true;
+
 
         // CSS
         this._cssNoScroll = "__Shifter__no-scroll_2019-15";
@@ -55,19 +56,20 @@ class Shifter extends Dispatcher {
             }
         }
 
+
         this._pointerDown = this._pointerDown.bind(this);
         this._pointerMove = this._pointerMove.bind(this);
         this._pointerUp = this._pointerUp.bind(this);
         this._dispatchEnd = this._dispatchEnd.bind(this);
 
 
-        this._target.addEventListener("mousedown", this._pointerDown);
-        window.addEventListener("mouseup", this._pointerUp);
+        this._target.addEventListener("mousedown", this._pointerDown, {passive: this._isPassive});
+        window.addEventListener("mouseup", this._pointerUp, {passive: this._isPassive});
 
         if ('ontouchstart' in window) {
 
-            this._target.addEventListener("touchstart", this._pointerDown);
-            window.addEventListener("touchend", this._pointerUp);
+            this._target.addEventListener("touchstart", this._pointerDown, {passive: this._isPassive});
+            window.addEventListener("touchend", this._pointerUp, {passive: this._isPassive});
 
         }
 
@@ -128,7 +130,7 @@ class Shifter extends Dispatcher {
         this._target.removeEventListener("touchstart", this._pointerDown);
         window.removeEventListener("mouseup", this._pointerUp);
         window.removeEventListener("touchend", this._pointerUp);
-        this._target.classList.remove(this._cssNoScroll);
+        this._unlockScroll();
         this._target = null;
         this.offAll();
         if (!keepCSS) this._removeCSS();
@@ -140,6 +142,9 @@ class Shifter extends Dispatcher {
 
 
     _pointerDown(e) {
+
+        // console.log(e.timeStamp - this._lastEvtDown)
+
         if (this._disabled) return;
 
         let clientX, clientY;
@@ -165,8 +170,8 @@ class Shifter extends Dispatcher {
         this._panY0 = clientY - this._targetY;
 
 
-        this._target.addEventListener("mousemove", this._pointerMove);
-        this._target.addEventListener("touchmove", this._pointerMove);
+        this._target.addEventListener("mousemove", this._pointerMove, {passive: this._isPassive});
+        this._target.addEventListener("touchmove", this._pointerMove, {passive: this._isPassive});
 
         this.dispatch(Shifter.Events.START, e);
 
@@ -186,8 +191,8 @@ class Shifter extends Dispatcher {
             clientY = e.clientY;
         }
 
-        this._speedX =  clientX - this._speedX0;
-        this._speedY =  clientY - this._speedY0;
+        this._speedX = clientX - this._speedX0;
+        this._speedY = clientY - this._speedY0;
         this._speedX0 = clientX;
         this._speedY0 = clientY;
 
@@ -202,8 +207,7 @@ class Shifter extends Dispatcher {
     _pointerUp(e) {
         if (this._disabled) return;
         this._removeMoveListeners();
-        this._target.classList.remove(this._cssNoScroll);
-        //debounce(this._dispatchEnd, 5);
+        this._unlockScroll();
         this._dispatchEnd(e);
     }
 
@@ -261,15 +265,15 @@ class Shifter extends Dispatcher {
 
         if (!this._isPanningX) {
 
-            let xa = Math.abs(x);
+            let xa = Math.abs(x - this._targetX);
             let ya = Math.abs(y);
+            console.log(xa, ya)
 
             if (ya > this._detectPanDist && ya > xa) {
                 this._removeMoveListeners();
             } else if (xa > this._detectPanDist && xa > ya) {
                 this._isPanningX = true;
-                //document.querySelector(".page").classList.add("no-scroll");
-                this._target.classList.add(this._cssNoScroll);
+                this._lockScroll();
                 this.dispatch(Shifter.Events.PAN_X_START, e);
             }
         } else {
@@ -342,6 +346,7 @@ class Shifter extends Dispatcher {
             let style = document.createElement('style');
             style.id = this._cssNoScroll;
             style.innerHTML = `.${this._cssNoScroll} * { overflow: hidden }`;
+            //style.innerHTML = `.${this._cssNoScroll} * { touch-action: none; user-events: none;}`;
             document.getElementsByTagName('head')[0].appendChild(style);
         }
     }
@@ -352,6 +357,14 @@ class Shifter extends Dispatcher {
         if (existingNoScroll) {
             document.getElementsByTagName('head')[0].removeChild(existingNoScroll);
         }
+    }
+
+    _lockScroll() {
+        //this._target.classList.add(this._cssNoScroll);
+    }
+
+    _unlockScroll() {
+        //this._target.classList.remove(this._cssNoScroll);
     }
 
 

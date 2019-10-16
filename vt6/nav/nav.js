@@ -69,6 +69,7 @@ function insertPage(page) {
     } else {
         let bb = pContainer.getBoundingClientRect();
         page.style.transform = `translateX(${bb.left - bb.width - gap}px)`;
+        //page.style.left = `${bb.left - bb.width - gap}px`;
         pContainer.appendChild(page);
         panPages.push(page)
     }
@@ -87,6 +88,7 @@ currentPage = p;
 panPages.push(p);
 
 
+insertPage(getPage(1));
 insertPage(getPage(2));
 insertPage(getPage(3));
 insertPage(getPage(4));
@@ -102,25 +104,43 @@ glide.useComputedStyle = true;
 let panStarted = false;
 const gest = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
 
-
 gest.on(Shifter.Events.PAN_X_START, (e) => {
     panStarted = true;
+    lockScroll(true);
+    //console.log("pan_x", Math.random())
 });
 
 gest.on(Shifter.Events.START, (e) => {
     //console.log(panStarted)
     if(panStarted) {
         glide.remove(pContainer);
+        currentPage.style.overflow = "hidden";
     }
 });
 
 gest.on(Shifter.Events.END, ()=> {
 
     if ( panStarted && gest.speedX < -10) {
-        //console.log(gest.speedX, panStarted)
+        /*
+        glide.to(pContainer, 400, {t: {x: [gest.targetX, -window.innerWidth - gap]}}, {ease:glide.Ease.quadOut})
+            .on("end", ()=> {
+                pContainer.style.transform = "";
+                currentPage.style.transform = "";
+            })
+         */
+        //glide.to(pContainer, 400, {left: -currentPage.getBoundingClientRect().left}, {ease:glide.Ease.quadOut})
         glide.to(pContainer, 400, {t: {x: [gest.targetX, -window.innerWidth - gap]}}, {ease:glide.Ease.quadOut});
+        panStarted = false;
     }
 });
+
+function lockScroll(bool) {
+    let style = bool? "hidden" : "auto";
+    let pages = document.querySelectorAll(".page");
+    for (let i = 0; i < pages.length; i++) {
+        pages[i].style.overflow = bool;
+    }
+}
 
 
 
