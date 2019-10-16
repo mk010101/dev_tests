@@ -284,6 +284,10 @@ class Shifter extends Dispatcher {
 
     }
 
+    /**
+     * Pans target on x- and y- Axes. Uses transform.
+     * @param e {Event} Event (touch or mouse)
+     */
     pan(e) {
         let clientX, clientY;
         if (e.type === "touchmove") {
@@ -308,6 +312,10 @@ class Shifter extends Dispatcher {
 
     }
 
+    /**
+     * Zooms target. Uses transform.
+     * @param e {Event} Event (touch or mouse)
+     */
     zoom(e) {
 
         if (e.type.indexOf("touch") > -1 && e.touches.length === 2) {

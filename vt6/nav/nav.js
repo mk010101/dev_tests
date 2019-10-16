@@ -69,13 +69,12 @@ function insertPage(page) {
     } else {
         let bb = pContainer.getBoundingClientRect();
         page.style.transform = `translateX(${bb.left - bb.width - gap}px)`;
-        //page.style.left = `${bb.left - bb.width - gap}px`;
+        page.style.left = `${bb.left - bb.width - gap}px`;
         pContainer.appendChild(page);
         panPages.push(page)
     }
 
     currentPage = page;
-
 
 }
 
@@ -89,16 +88,16 @@ panPages.push(p);
 
 
 insertPage(getPage(1));
-insertPage(getPage(2));
-insertPage(getPage(3));
-insertPage(getPage(4));
+//insertPage(getPage(2));
+//insertPage(getPage(3));
+//insertPage(getPage(4));
 
 
 
 
 //-------------------------------------------------------------------------------------------
 
-glide.useComputedStyle = true;
+//glide.useComputedStyle = true;
 
 
 let panStarted = false;
@@ -112,6 +111,7 @@ gest.on(Shifter.Events.PAN_X_START, (e) => {
 
 gest.on(Shifter.Events.START, (e) => {
     //console.log(panStarted)
+    //glide.remove(pContainer);
     if(panStarted) {
         glide.remove(pContainer);
         currentPage.style.overflow = "hidden";
@@ -120,16 +120,11 @@ gest.on(Shifter.Events.START, (e) => {
 
 gest.on(Shifter.Events.END, ()=> {
 
-    if ( panStarted && gest.speedX < -10) {
-        /*
-        glide.to(pContainer, 400, {t: {x: [gest.targetX, -window.innerWidth - gap]}}, {ease:glide.Ease.quadOut})
-            .on("end", ()=> {
-                pContainer.style.transform = "";
-                currentPage.style.transform = "";
-            })
-         */
-        //glide.to(pContainer, 400, {left: -currentPage.getBoundingClientRect().left}, {ease:glide.Ease.quadOut})
+    if ( panStarted && gest.speedX < -5) {
         glide.to(pContainer, 400, {t: {x: [gest.targetX, -window.innerWidth - gap]}}, {ease:glide.Ease.quadOut});
+        panStarted = false;
+    } else if ( panStarted && gest.speedX > 5) {
+        glide.to(pContainer, 400, {t: {x: [gest.targetX, 0]}}, {ease:glide.Ease.quadOut});
         panStarted = false;
     }
 });
