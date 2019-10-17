@@ -28,7 +28,7 @@ for (let i = 0; i < 10; i++) {
 
 
 const pContainer = document.querySelector(".pages-container");
-const gap = 50;
+const gap = 0;
 
 let currentPage;
 let panPages = [];
@@ -88,9 +88,9 @@ panPages.push(p);
 
 
 insertPage(getPage(1));
-//insertPage(getPage(2));
-//insertPage(getPage(3));
-//insertPage(getPage(4));
+insertPage(getPage(2));
+insertPage(getPage(3));
+insertPage(getPage(4));
 
 
 
@@ -100,19 +100,16 @@ insertPage(getPage(1));
 //glide.useComputedStyle = true;
 
 
-let panStarted = false;
+//let panStarted = false;
 const gest = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
 
 gest.on(Shifter.Events.PAN_X_START, (e) => {
-    panStarted = true;
-    lockScroll(true);
-    //console.log("pan_x", Math.random())
+
 });
 
 gest.on(Shifter.Events.START, (e) => {
-    //console.log(panStarted)
-    //glide.remove(pContainer);
-    if(panStarted) {
+    //console.log(gest.targetX, panPages[1].getBoundingClientRect().left, window.innerWidth)
+    if(0 < 1) {
         glide.remove(pContainer);
         currentPage.style.overflow = "hidden";
     }
@@ -120,22 +117,16 @@ gest.on(Shifter.Events.START, (e) => {
 
 gest.on(Shifter.Events.END, ()=> {
 
-    if ( panStarted && gest.speedX < -5) {
-        glide.to(pContainer, 400, {t: {x: [gest.targetX, -window.innerWidth - gap]}}, {ease:glide.Ease.quadOut});
-        panStarted = false;
-    } else if ( panStarted && gest.speedX > 5) {
+    if ( gest.speedX < -5) {
+        glide.to(pContainer, 400, {t: {x: gest.targetX - panPages[1].getBoundingClientRect().left}}, {ease:glide.Ease.quadOut});
+        //console.log(gest.targetX, panPages[1].getBoundingClientRect().left)
+        //panStarted = false;
+    } else if ( gest.speedX > 5) {
         glide.to(pContainer, 400, {t: {x: [gest.targetX, 0]}}, {ease:glide.Ease.quadOut});
-        panStarted = false;
+        //panStarted = false;
     }
 });
 
-function lockScroll(bool) {
-    let style = bool? "hidden" : "auto";
-    let pages = document.querySelectorAll(".page");
-    for (let i = 0; i < pages.length; i++) {
-        pages[i].style.overflow = bool;
-    }
-}
 
 
 
