@@ -63,14 +63,13 @@ class Shifter extends Dispatcher {
         this._dispatchEnd = this._dispatchEnd.bind(this);
 
 
-        this._target.addEventListener("mousedown", this._pointerDown, {passive: this._isPassive});
-        window.addEventListener("mouseup", this._pointerUp, {passive: this._isPassive});
 
         if ('ontouchstart' in window) {
-
             this._target.addEventListener("touchstart", this._pointerDown, {passive: this._isPassive});
             window.addEventListener("touchend", this._pointerUp, {passive: this._isPassive});
-
+        } else {
+            this._target.addEventListener("mousedown", this._pointerDown, {passive: this._isPassive});
+            window.addEventListener("mouseup", this._pointerUp, {passive: this._isPassive});
         }
 
         this._addCSS();
@@ -284,6 +283,10 @@ class Shifter extends Dispatcher {
 
     }
 
+    /**
+     * Pans target on x- and y- Axes. Uses transform.
+     * @param e {Event} Event (touch or mouse)
+     */
     pan(e) {
         let clientX, clientY;
         if (e.type === "touchmove") {
@@ -308,6 +311,10 @@ class Shifter extends Dispatcher {
 
     }
 
+    /**
+     * Zooms target. Uses transform.
+     * @param e {Event} Event (touch or mouse)
+     */
     zoom(e) {
 
         if (e.type.indexOf("touch") > -1 && e.touches.length === 2) {
