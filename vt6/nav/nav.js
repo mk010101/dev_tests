@@ -101,7 +101,7 @@ pContainer.appendChild(p.html);
 currentPage = p;
 pages.push(p);
 
-addPageNext();
+//addPageNext();
 
 
 //-------------------------------------------------------------------------------------------
@@ -111,6 +111,7 @@ function setListeners() {
 
     shifter.on(Shifter.Events.PAN_X_START, (e) => {
 
+        //console.log(1)
 
     });
 
@@ -121,8 +122,8 @@ function setListeners() {
     shifter.on(Shifter.Events.END, () => {
 
         if (shifter.speedX < -5) {
-            glide.to(pContainer, 300, {t: {x: shifter.targetX - pages[1].html.getBoundingClientRect().left}}, {ease: glide.Ease.quadOut});
             addPageNext();
+            glide.to(pContainer, 300, {t: {x: shifter.targetX - pages[pages.length-1].html.getBoundingClientRect().left}}, {ease: glide.Ease.quadOut});
         } else if (shifter.speedX > 5) {
             glide.to(pContainer, 300, {t: {x: [shifter.targetX, 0]}}, {ease: glide.Ease.quadOut});
         }
