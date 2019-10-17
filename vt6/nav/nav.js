@@ -1,7 +1,47 @@
 import {Shifter} from "./Shifter.js";
 
+const pContainer = document.querySelector(".pages-container");
+const gap = 50;
 
+let currentPage;
 let pages = [];
+
+const shifter = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
+
+
+class Page {
+
+    constructor(pos) {
+        this.position = pos;
+        this._html = "";
+        this.init();
+    }
+
+    init() {
+        let str = "";
+        let pageData = pagesData[this.position];
+        str += `<h3>${pageData.title}</h3>
+        <section class="page-content">
+            <div><img src="../assets/1.jpg" alt="Hello world!" draggable="false"></div>
+            <div>${pageData.text}</div>
+        </section>
+    `;
+
+        let p = document.createElement("div");
+        p.setAttribute("data-id", this.position);
+        p.classList.add("page");
+        p.innerHTML = str;
+        this._html = p;
+    }
+
+    get html() {
+        return this._html;
+    }
+
+}
+
+
+let pagesData = [];
 for (let i = 0; i < 10; i++) {
     let page = {
         title: "Page Title: " + (i),
@@ -23,58 +63,34 @@ for (let i = 0; i < 10; i++) {
             It was popularised in the 1960s with the release of Letraset sheets containing Lorem Ipsum passages, 
             and more recently with desktop publishing software like Aldus PageMaker including versions of Lorem Ipsum.</p>`
     };
-    pages.push(page);
+    pagesData.push(page);
 }
 
 
-const pContainer = document.querySelector(".pages-container");
-const gap = 50;
-
-let currentPage;
-let elPagesArr = [];
-
-const shifter = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
 
 
-function createPage(idNum) {
 
-    let str = "";
-
-    let page = pages[idNum];
-    str += `<h3>${page.title}</h3>
-        <section class="page-content">
-            <div><img src="../assets/1.jpg" alt="Hello world!" draggable="false"></div>
-            <div>${page.text}</div>
-        </section>
-    `;
-
-    let p = document.createElement("div");
-    p.setAttribute("data-id", idNum);
-    p.classList.add("page");
-    p.innerHTML = str;
-    return p;
-}
 
 
 
 
 function addPageNext() {
 
-    let lastPage = elPagesArr[elPagesArr.length - 1];
-    let id = parseInt(lastPage.getAttribute("data-id"));
-    let x = lastPage.getBoundingClientRect().right + gap - shifter.targetX;
+    let lastPage = pages[pages.length - 1];
+    let id = parseInt(lastPage.position);
+    let x = lastPage.html.getBoundingClientRect().right + gap - shifter.targetX;
 
-    let newPage = createPage(id + 1);
-    newPage.style.transform = `translateX(${x}px)`;
-    pContainer.appendChild(newPage);
-    elPagesArr.push(newPage);
+    let newPage = new Page(id + 1);
+    newPage.html.style.transform = `translateX(${x}px)`;
+    pContainer.appendChild(newPage.html);
+    pages.push(newPage);
 }
 
 
-let p = createPage(0);
-pContainer.appendChild(p);
+let p = new Page(0);
+pContainer.appendChild(p.html);
 currentPage = p;
-elPagesArr.push(p);
+pages.push(p);
 
 addPageNext();
 
@@ -96,7 +112,7 @@ function setListeners() {
     shifter.on(Shifter.Events.END, () => {
 
         if (shifter.speedX < -5) {
-            glide.to(pContainer, 300, {t: {x: shifter.targetX - elPagesArr[1].getBoundingClientRect().left}}, {ease: glide.Ease.quadOut});
+            glide.to(pContainer, 300, {t: {x: shifter.targetX - pages[1].html.getBoundingClientRect().left}}, {ease: glide.Ease.quadOut});
             addPageNext();
         } else if (shifter.speedX > 5) {
             glide.to(pContainer, 300, {t: {x: [shifter.targetX, 0]}}, {ease: glide.Ease.quadOut});
