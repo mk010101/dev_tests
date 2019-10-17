@@ -127,6 +127,7 @@ function setListeners() {
         } else if (shifter.speedX > 5) {
             glide.to(pContainer, 300, {t: {x: [shifter.targetX, 0]}}, {ease: glide.Ease.quadOut});
         }
+        //console.log(performance.)
     });
 }
 
