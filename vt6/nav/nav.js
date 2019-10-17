@@ -33,7 +33,7 @@ const gap = 50;
 let currentPage;
 let elPagesArr = [];
 
-const gest = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
+const shifter = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
 
 
 function createPage(idNum) {
@@ -56,35 +56,13 @@ function createPage(idNum) {
 }
 
 
-function $$insertPage(page) {
-
-
-    let curId = parseInt(currentPage.getAttribute("data-id"));
-    let newId = parseInt(page.getAttribute("data-id"));
-    let bb = currentPage.getBoundingClientRect();
-
-    if (newId > curId) {
-        page.style.transform = `translateX(${bb.right + gap}px)`;
-        pContainer.appendChild(page);
-        elPagesArr.push(page)
-    } else {
-        let bb = pContainer.getBoundingClientRect();
-        page.style.transform = `translateX(${bb.left - bb.width - gap}px)`;
-        page.style.left = `${bb.left - bb.width - gap}px`;
-        pContainer.appendChild(page);
-        elPagesArr.push(page)
-    }
-
-    currentPage = page;
-
-}
 
 
 function addPageNext() {
 
     let lastPage = elPagesArr[elPagesArr.length - 1];
     let id = parseInt(lastPage.getAttribute("data-id"));
-    let x = lastPage.getBoundingClientRect().right + gap;
+    let x = lastPage.getBoundingClientRect().right + gap - shifter.targetX;
 
     let newPage = createPage(id + 1);
     newPage.style.transform = `translateX(${x}px)`;
@@ -99,8 +77,6 @@ currentPage = p;
 elPagesArr.push(p);
 
 addPageNext();
-addPageNext();
-addPageNext();
 
 
 //-------------------------------------------------------------------------------------------
@@ -108,23 +84,22 @@ addPageNext();
 
 function setListeners() {
 
-    gest.on(Shifter.Events.PAN_X_START, (e) => {
+    shifter.on(Shifter.Events.PAN_X_START, (e) => {
 
 
     });
 
-    gest.on(Shifter.Events.START, (e) => {
-        if (0 < 1) {
-            glide.remove(pContainer);
-        }
+    shifter.on(Shifter.Events.START, (e) => {
+        glide.remove(pContainer);
     });
 
-    gest.on(Shifter.Events.END, () => {
+    shifter.on(Shifter.Events.END, () => {
 
-        if (gest.speedX < -5) {
-            glide.to(pContainer, 300, {t: {x: gest.targetX - elPagesArr[1].getBoundingClientRect().left}}, {ease: glide.Ease.quadOut});
-        } else if (gest.speedX > 5) {
-            glide.to(pContainer, 300, {t: {x: [gest.targetX, 0]}}, {ease: glide.Ease.quadOut});
+        if (shifter.speedX < -5) {
+            glide.to(pContainer, 300, {t: {x: shifter.targetX - elPagesArr[1].getBoundingClientRect().left}}, {ease: glide.Ease.quadOut});
+            addPageNext();
+        } else if (shifter.speedX > 5) {
+            glide.to(pContainer, 300, {t: {x: [shifter.targetX, 0]}}, {ease: glide.Ease.quadOut});
         }
     });
 }
