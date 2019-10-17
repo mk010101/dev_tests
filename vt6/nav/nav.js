@@ -114,7 +114,6 @@ function setListeners() {
     });
 
     gest.on(Shifter.Events.START, (e) => {
-        //console.log(gest.targetX, panPages[1].getBoundingClientRect().left, window.innerWidth)
         if (0 < 1) {
             glide.remove(pContainer);
         }
@@ -123,12 +122,9 @@ function setListeners() {
     gest.on(Shifter.Events.END, () => {
 
         if (gest.speedX < -5) {
-            glide.to(pContainer, 400, {t: {x: gest.targetX - elPagesArr[1].getBoundingClientRect().left}}, {ease: glide.Ease.quadOut});
-            //console.log(gest.targetX, panPages[1].getBoundingClientRect().left)
-            //panStarted = false;
+            glide.to(pContainer, 300, {t: {x: gest.targetX - elPagesArr[1].getBoundingClientRect().left}}, {ease: glide.Ease.quadOut});
         } else if (gest.speedX > 5) {
-            glide.to(pContainer, 400, {t: {x: [gest.targetX, 0]}}, {ease: glide.Ease.quadOut});
-            //panStarted = false;
+            glide.to(pContainer, 300, {t: {x: [gest.targetX, 0]}}, {ease: glide.Ease.quadOut});
         }
     });
 }
