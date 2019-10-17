@@ -63,14 +63,13 @@ class Shifter extends Dispatcher {
         this._dispatchEnd = this._dispatchEnd.bind(this);
 
 
-        this._target.addEventListener("mousedown", this._pointerDown, {passive: this._isPassive});
-        window.addEventListener("mouseup", this._pointerUp, {passive: this._isPassive});
 
         if ('ontouchstart' in window) {
-
             this._target.addEventListener("touchstart", this._pointerDown, {passive: this._isPassive});
             window.addEventListener("touchend", this._pointerUp, {passive: this._isPassive});
-
+        } else {
+            this._target.addEventListener("mousedown", this._pointerDown, {passive: this._isPassive});
+            window.addEventListener("mouseup", this._pointerUp, {passive: this._isPassive});
         }
 
         this._addCSS();

@@ -28,13 +28,15 @@ for (let i = 0; i < 10; i++) {
 
 
 const pContainer = document.querySelector(".pages-container");
-const gap = 0;
+const gap = 50;
 
 let currentPage;
-let panPages = [];
+let elPagesArr = [];
+
+const gest = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
 
 
-function getPage(idNum) {
+function createPage(idNum) {
 
     let str = "";
 
@@ -54,24 +56,23 @@ function getPage(idNum) {
 }
 
 
-function insertPage(page) {
+function $$insertPage(page) {
 
-    //let lastPage = panPages[panPages.length-1];
 
-    let curId =parseInt(currentPage.getAttribute("data-id"));
-    let newId =parseInt(page.getAttribute("data-id"));
+    let curId = parseInt(currentPage.getAttribute("data-id"));
+    let newId = parseInt(page.getAttribute("data-id"));
     let bb = currentPage.getBoundingClientRect();
 
     if (newId > curId) {
         page.style.transform = `translateX(${bb.right + gap}px)`;
         pContainer.appendChild(page);
-        panPages.push(page)
+        elPagesArr.push(page)
     } else {
         let bb = pContainer.getBoundingClientRect();
         page.style.transform = `translateX(${bb.left - bb.width - gap}px)`;
         page.style.left = `${bb.left - bb.width - gap}px`;
         pContainer.appendChild(page);
-        panPages.push(page)
+        elPagesArr.push(page)
     }
 
     currentPage = page;
@@ -79,53 +80,60 @@ function insertPage(page) {
 }
 
 
+function addPageNext() {
+
+    let lastPage = elPagesArr[elPagesArr.length - 1];
+    let id = parseInt(lastPage.getAttribute("data-id"));
+    let x = lastPage.getBoundingClientRect().right + gap;
+
+    let newPage = createPage(id + 1);
+    newPage.style.transform = `translateX(${x}px)`;
+    pContainer.appendChild(newPage);
+    elPagesArr.push(newPage);
+}
 
 
-let p = getPage(0);
+let p = createPage(0);
 pContainer.appendChild(p);
 currentPage = p;
-panPages.push(p);
+elPagesArr.push(p);
 
-
-insertPage(getPage(1));
-insertPage(getPage(2));
-insertPage(getPage(3));
-insertPage(getPage(4));
-
-
+addPageNext();
+addPageNext();
+addPageNext();
 
 
 //-------------------------------------------------------------------------------------------
 
-//glide.useComputedStyle = true;
+
+function setListeners() {
+
+    gest.on(Shifter.Events.PAN_X_START, (e) => {
 
 
-//let panStarted = false;
-const gest = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
+    });
 
-gest.on(Shifter.Events.PAN_X_START, (e) => {
+    gest.on(Shifter.Events.START, (e) => {
+        //console.log(gest.targetX, panPages[1].getBoundingClientRect().left, window.innerWidth)
+        if (0 < 1) {
+            glide.remove(pContainer);
+        }
+    });
 
-});
+    gest.on(Shifter.Events.END, () => {
 
-gest.on(Shifter.Events.START, (e) => {
-    //console.log(gest.targetX, panPages[1].getBoundingClientRect().left, window.innerWidth)
-    if(0 < 1) {
-        glide.remove(pContainer);
-        currentPage.style.overflow = "hidden";
-    }
-});
+        if (gest.speedX < -5) {
+            glide.to(pContainer, 400, {t: {x: gest.targetX - elPagesArr[1].getBoundingClientRect().left}}, {ease: glide.Ease.quadOut});
+            //console.log(gest.targetX, panPages[1].getBoundingClientRect().left)
+            //panStarted = false;
+        } else if (gest.speedX > 5) {
+            glide.to(pContainer, 400, {t: {x: [gest.targetX, 0]}}, {ease: glide.Ease.quadOut});
+            //panStarted = false;
+        }
+    });
+}
 
-gest.on(Shifter.Events.END, ()=> {
-
-    if ( gest.speedX < -5) {
-        glide.to(pContainer, 400, {t: {x: gest.targetX - panPages[1].getBoundingClientRect().left}}, {ease:glide.Ease.quadOut});
-        //console.log(gest.targetX, panPages[1].getBoundingClientRect().left)
-        //panStarted = false;
-    } else if ( gest.speedX > 5) {
-        glide.to(pContainer, 400, {t: {x: [gest.targetX, 0]}}, {ease:glide.Ease.quadOut});
-        //panStarted = false;
-    }
-});
+setListeners();
 
 
 
