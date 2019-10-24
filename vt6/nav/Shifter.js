@@ -144,6 +144,9 @@ class Shifter extends Dispatcher {
 
         // console.log(e.timeStamp - this._lastEvtDown)
 
+        this._speedX = 0;
+        this._speedY = 0;
+
         if (this._disabled) return;
 
         let clientX, clientY;
