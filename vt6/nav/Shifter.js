@@ -63,14 +63,8 @@ class Shifter extends Dispatcher {
         this._dispatchEnd = this._dispatchEnd.bind(this);
 
 
-
-        if ('ontouchstart' in window) {
-            this._target.addEventListener("touchstart", this._pointerDown, {passive: this._isPassive});
-            window.addEventListener("touchend", this._pointerUp, {passive: this._isPassive});
-        } else {
-            this._target.addEventListener("mousedown", this._pointerDown, {passive: this._isPassive});
-            window.addEventListener("mouseup", this._pointerUp, {passive: this._isPassive});
-        }
+        this._target.addEventListener("pointerdown", this._pointerDown);
+        window.addEventListener("pointerup", this._pointerUp);
 
         this._addCSS();
 
@@ -151,17 +145,9 @@ class Shifter extends Dispatcher {
 
         let clientX, clientY;
 
-        this._isEvtTouch = e.type.indexOf("touch") > -1;
 
-        if (this._isEvtTouch) {
-
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-
-        } else {
-            clientX = e.clientX;
-            clientY = e.clientY;
-        }
+        clientX = e.clientX;
+        clientY = e.clientY;
 
         this._getTransforms();
 
@@ -172,8 +158,7 @@ class Shifter extends Dispatcher {
         this._panY0 = clientY - this._targetY;
 
 
-        this._target.addEventListener("mousemove", this._pointerMove, {passive: this._isPassive});
-        this._target.addEventListener("touchmove", this._pointerMove, {passive: this._isPassive});
+        this._target.addEventListener("pointermove", this._pointerMove, {passive: this._isPassive});
 
         this.dispatch(Shifter.Events.START, e);
 
@@ -185,13 +170,9 @@ class Shifter extends Dispatcher {
         if (this._disabled) return;
         let clientX, clientY;
 
-        if (e.type.indexOf("touch") > -1) {
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        } else {
-            clientX = e.clientX;
-            clientY = e.clientY;
-        }
+
+        clientX = e.clientX;
+        clientY = e.clientY;
 
         this._speedX = clientX - this._speedX0;
         this._speedY = clientY - this._speedY0;
@@ -214,8 +195,7 @@ class Shifter extends Dispatcher {
     }
 
     _removeMoveListeners() {
-        this._target.removeEventListener("mousemove", this._pointerMove);
-        this._target.removeEventListener("touchmove", this._pointerMove);
+        this._target.removeEventListener("pointermove", this._pointerMove);
         this._isPanningX = false;
     }
 
@@ -248,18 +228,10 @@ class Shifter extends Dispatcher {
      */
     panX(e) {
         let clientX, clientY;
-        if (e.type === "touchmove") {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-                return;
-            }
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        } else {
-            clientX = e.clientX;
-            clientY = e.clientY;
-        }
 
+
+        clientX = e.clientX;
+        clientY = e.clientY;
 
         let x = clientX - this._panX0;
         let y = clientY - this._panY0;
