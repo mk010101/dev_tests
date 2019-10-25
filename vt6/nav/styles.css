@@ -70,8 +70,7 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0;
-    touch-action: pan-y;
-    zpointer-events: none;
+    touch-action: pan-y; /* set to none for pan and zoom */
 }
 
 .page *, header, footer {
