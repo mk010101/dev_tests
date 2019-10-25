@@ -21,7 +21,7 @@ body {
     height: 100vh;
 
     overflow: hidden;
-    position: absolute;
+    position: fixed;
 
 }
 
@@ -61,6 +61,8 @@ body {
     z-index: 1;
 }
 
+
+
 .page {
     height: calc(100vh - 2rem);
     width: 100vw;
@@ -68,8 +70,18 @@ body {
     overflow-y: auto;
     overflow-x: hidden;
     padding: 0;
-    touch-action: pan-x pan-y;
+    touch-action: pan-y;
+    zpointer-events: none;
 }
+
+.page *, header, footer {
+    -webkit-touch-callout: none; /* iOS Safari */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* Internet Explorer/Edge */
+    user-select: none; /* Non-prefixed version, currently
+                                  supported by Chrome, Opera and Firefox */
+}
+
 
 
 

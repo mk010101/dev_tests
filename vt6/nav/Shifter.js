@@ -183,6 +183,7 @@ class Shifter extends Dispatcher {
             this[this._gestures[i]](e);
         }
 
+        //console.log(e)
         this.dispatch(Shifter.Events.MOVE, e);
     }
 
@@ -192,6 +193,7 @@ class Shifter extends Dispatcher {
         this._removeMoveListeners();
         this._unlockScroll();
         this._dispatchEnd(e);
+        console.log(e)
     }
 
     _removeMoveListeners() {
@@ -326,7 +328,7 @@ class Shifter extends Dispatcher {
         if (!existingNoScroll) {
             let style = document.createElement('style');
             style.id = this._cssNoScroll;
-            style.innerHTML = `.${this._cssNoScroll} * { overflow: hidden }`;
+            style.innerHTML = `.${this._cssNoScroll} * { overflow: hidden; }`;
             //style.innerHTML = `.${this._cssNoScroll} * { touch-action: none; user-events: none;}`;
             document.getElementsByTagName('head')[0].appendChild(style);
         }
