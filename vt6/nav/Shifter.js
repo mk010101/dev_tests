@@ -44,12 +44,12 @@ class Shifter extends Dispatcher {
         this._cssNoScroll = "__Shifter__no-scroll_2019-15";
 
 
-        this.init(funcs);
+        this._init(funcs);
 
 
     }
 
-    init(funcs) {
+    _init(funcs) {
 
         for (let i = 0; i < funcs.length; i++) {
             let funcStr = funcs[i];
@@ -59,18 +59,47 @@ class Shifter extends Dispatcher {
         }
 
 
-        this._pointerDown = this._pointerDown.bind(this);
-        this._pointerMove = this._pointerMove.bind(this);
-        this._pointerUp = this._pointerUp.bind(this);
-        this._dispatchEnd = this._dispatchEnd.bind(this);
+        if ("PointerEvent" in window) {
+
+            this._down = this._down.bind(this);
+            this._move = this._move.bind(this);
+            this._up = this._up.bind(this);
+            this._dispatchEnd = this._dispatchEnd.bind(this);
+
+            this._target.addEventListener("pointerdown", this._down);
+            window.addEventListener("pointerup", this._up);
+
+        } else if ("ontouchstart" in window) {
+
+            this._touchDown = this._touchDown.bind(this);
 
 
-        this._target.addEventListener("pointerdown", this._pointerDown);
-        window.addEventListener("pointerup", this._pointerUp);
+            this._target.addEventListener("touchstart", this._touchDown);
+
+        }
+
+
+
 
         this._addCSS();
 
     }
+
+
+
+    _touchDown(e) {
+
+    }
+
+    _touchMove(e) {
+
+    }
+
+    _touchUp(e) {
+
+    }
+
+
 
 
     get speedX() {
@@ -119,16 +148,16 @@ class Shifter extends Dispatcher {
     }
 
     remove(keepCSS = true) {
-        this._target.removeEventListener("mousemove", this._pointerMove);
-        this._target.removeEventListener("touchmove", this._pointerMove);
-        this._target.removeEventListener("mousedown", this._pointerDown);
-        this._target.removeEventListener("touchstart", this._pointerDown);
-        window.removeEventListener("mouseup", this._pointerUp);
-        window.removeEventListener("touchend", this._pointerUp);
+
+        this._target.removeEventListener("pointermove", this._move);
+        this._target.removeEventListener("pointerdown", this._down);
+        window.removeEventListener("pointerup", this._up);
         this._unlockScroll();
         this._target = null;
         this.offAll();
+
         if (!keepCSS) this._removeCSS();
+
     }
 
     /* =================================================================================================================
@@ -136,7 +165,7 @@ class Shifter extends Dispatcher {
      =================================================================================================================*/
 
 
-    _pointerDown(e) {
+    _down(e) {
 
         // console.log(e.timeStamp - this._lastEvtDown)
 
@@ -159,13 +188,13 @@ class Shifter extends Dispatcher {
         this._target.setPointerCapture(e.pointerId);
         this._pointers.push(e);
 
-        this._target.addEventListener("pointermove", this._pointerMove, {passive: this._isPassiveEvt});
+        this._target.addEventListener("pointermove", this._move, {passive: this._isPassiveEvt});
 
         this.dispatch(Shifter.Events.START, e);
 
     }
 
-    _pointerMove(e) {
+    _move(e) {
         if (this._disabled) return;
 
 
@@ -185,7 +214,7 @@ class Shifter extends Dispatcher {
     }
 
 
-    _pointerUp(e) {
+    _up(e) {
         if (this._disabled) return;
 
         for (let i = this._pointers.length - 1; i >= 0; i--) {
@@ -201,7 +230,7 @@ class Shifter extends Dispatcher {
     }
 
     _removeMoveListeners() {
-        this._target.removeEventListener("pointermove", this._pointerMove);
+        this._target.removeEventListener("pointermove", this._move);
         this._isPanningX = false;
     }
 
