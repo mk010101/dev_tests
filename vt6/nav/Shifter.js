@@ -156,7 +156,7 @@ class Shifter extends Dispatcher {
         this._panX0 = clientX - this._targetX;
         this._panY0 = clientY - this._targetY;
 
-        //this._target.setPointerCapture(e.pointerId);
+        this._target.setPointerCapture(e.pointerId);
         this._pointers.push(e);
 
         this._target.addEventListener("pointermove", this._pointerMove, {passive: this._isPassiveEvt});
@@ -235,8 +235,8 @@ class Shifter extends Dispatcher {
     panX(e) {
 
         if (this._pointers.length > 1) {
-            e.preventDefault();
-            return;
+            //e.preventDefault();
+            //return;
         }
 
         let x = e.clientX - this._panX0;
