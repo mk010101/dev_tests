@@ -71,10 +71,8 @@ class Shifter extends Dispatcher {
 
         } else if ("ontouchstart" in window) {
 
-            this._touchDown = this._touchDown.bind(this);
-
-
-            this._target.addEventListener("touchstart", this._touchDown);
+            //this._touchDown = this._touchDown.bind(this);
+            //this._target.addEventListener("touchstart", this._touchDown);
 
         }
 
