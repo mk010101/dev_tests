@@ -8,7 +8,6 @@ const gap = 50;
 let currentPage;
 let pages = [];
 
-const shifter = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
 
 
 // data stub -----------------------------------------------------------------------------------------------------------
@@ -17,6 +16,9 @@ let pagesData = [];
 for (let i = 0; i < 10; i++) {
     let page = {
         title: "Page Title: " + (i),
+        image: {
+            src: "../assets/1.jpg"
+        },
         text: `<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. 
             Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took 
             a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, 
@@ -55,9 +57,9 @@ class Page {
     init() {
         let str = "";
         let pageData = pagesData[this.position];
-        str += `<h3>${pageData.title}</h3>
+        str += `<div><h3>${pageData.title}</h3></div>
         <section class="page-content">
-            <div><img src="../assets/1.jpg" alt="Hello world!" draggable="false"></div>
+            <div class="media"><img src="../assets/1.jpg" alt="Hello world!"><div class="hotspot"></div></div>
             <div>${pageData.text}</div>
         </section>
     `;
@@ -106,6 +108,13 @@ pages.push(p);
 
 //-------------------------------------------------------------------------------------------
 
+
+const elMedia = document.querySelector(".media");
+
+const shifter = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
+
+//const shifter = new Shifter(elMedia, [Shifter.Funcs.ZOOM, Shifter.Funcs.PAN]);
+elMedia.addEventListener("click", (e)=> console.log(e.target));
 
 function setListeners() {
 

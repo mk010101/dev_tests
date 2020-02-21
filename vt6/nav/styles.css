@@ -71,7 +71,18 @@ body {
     overflow-x: hidden;
     padding: 0;
     touch-action: pan-y; /* set to none for pan and zoom */
+
 }
+
+.page-content {
+    position: relative;
+    display: flex;
+}
+
+.page-content > div {
+    width: 50%;
+}
+
 
 .page *, header, footer {
     -webkit-touch-callout: none; /* iOS Safari */
@@ -97,14 +108,47 @@ body {
         top: 0;
     }
 
+    .page-content {
+        display: block;
+    }
+
+    .page-content > div {
+        width: 100%;
+    }
+
 }
 
 
 /*-----------------------------------*/
 
-p {
-    padding: 1rem;
+
+.media {
+    position: relative;
 }
 
 
+img {
+    pointer-events: none;
+    display: block;
+    width: 100%;
+    position: relative;
+}
+
+
+p {
+    margin-bottom: 1rem;
+    margin-top: 0;
+}
+
+
+.hotspot {
+    position: absolute;
+    width: 120px;
+    height: 120px;
+    background-color: #68a7cb;
+    top: 0;
+    margin-top: 10%;
+    margin-left: 25%;
+    cursor: pointer;
+}
 

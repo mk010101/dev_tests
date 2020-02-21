@@ -39,6 +39,8 @@ class Shifter extends Dispatcher {
 
         this._pointers = [];
 
+        this._units = "px";
+
 
         // CSS
         this._cssNoScroll = "__Shifter__no-scroll_2019-15";
@@ -142,7 +144,7 @@ class Shifter extends Dispatcher {
     }
 
     updateTransforms() {
-        this._getTransforms();
+        this._setTransforms();
     }
 
     remove(keepCSS = true) {
@@ -175,7 +177,7 @@ class Shifter extends Dispatcher {
         let clientX = e.clientX;
         let clientY = e.clientY;
 
-        this._getTransforms();
+        this._setTransforms();
 
         this._speedX0 = clientX;
         this._speedY0 = clientY;
@@ -183,7 +185,7 @@ class Shifter extends Dispatcher {
         this._panX0 = clientX - this._targetX;
         this._panY0 = clientY - this._targetY;
 
-        this._target.setPointerCapture(e.pointerId);
+        //this._target.setPointerCapture(e.pointerId);
         this._pointers.push(e);
 
         this._target.addEventListener("pointermove", this._move, {passive: this._isPassiveEvt});
@@ -236,7 +238,7 @@ class Shifter extends Dispatcher {
         this.dispatch(Shifter.Events.END, null);
     }
 
-    _getTransforms() {
+    _setTransforms() {
         let str = this._target.style.transform;
         let arr = str.split(/\s+/gmi);
         for (let i = 0; i < arr.length; i++) {
@@ -347,7 +349,7 @@ class Shifter extends Dispatcher {
 
     _applyTransforms() {
         this._target.style.transform = `
-        translatex(${this._targetX}px) translateY(${this._targetY}px) 
+        translateX(${this._targetX}${this._units}) translateY(${this._targetY}${this._units}) 
         scaleX(${this._targetScale}) scaleY(${this._targetScale})`;
     }
 
