@@ -39,8 +39,6 @@ class Shifter extends Dispatcher {
 
         this._pointers = [];
 
-        this._units = "px";
-
 
         // CSS
         this._cssNoScroll = "__Shifter__no-scroll_2019-15";
@@ -349,7 +347,7 @@ class Shifter extends Dispatcher {
 
     _applyTransforms() {
         this._target.style.transform = `
-        translateX(${this._targetX}${this._units}) translateY(${this._targetY}${this._units}) 
+        translateX(${this._targetX}px) translateY(${this._targetY}px) 
         scaleX(${this._targetScale}) scaleY(${this._targetScale})`;
     }
 
