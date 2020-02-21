@@ -111,7 +111,7 @@ pages.push(p);
 
 const elMedia = document.querySelector(".media");
 
-const shifter = new Shifter(pContainer, [Shifter.Func.PAN_X, Shifter.Func.CLICK]);
+const shifter = new Shifter(pContainer, [Shifter.Funcs.PAN_X, Shifter.Funcs.CLICK]);
 
 //const shifter = new Shifter(elMedia, [Shifter.Funcs.ZOOM, Shifter.Funcs.PAN]);
 //elMedia.addEventListener("click", (e)=> console.log(e.target));
