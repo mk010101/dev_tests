@@ -111,10 +111,10 @@ pages.push(p);
 
 const elMedia = document.querySelector(".media");
 
-const shifter = new Shifter(pContainer, [Shifter.Funcs.PAN_X]);
+const shifter = new Shifter(pContainer, [Shifter.Funcs.PAN_X, Shifter.Funcs.CLICK]);
 
 //const shifter = new Shifter(elMedia, [Shifter.Funcs.ZOOM, Shifter.Funcs.PAN]);
-elMedia.addEventListener("click", (e)=> console.log(e.target));
+//elMedia.addEventListener("click", (e)=> console.log(e.target));
 
 function setListeners() {
 
@@ -138,6 +138,8 @@ function setListeners() {
         }
         //console.log(performance.)
     });
+
+    shifter.on(Shifter.Events.CLICK, e => console.log(e));
 }
 
 setListeners();

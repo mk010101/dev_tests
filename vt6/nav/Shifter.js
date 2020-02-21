@@ -21,6 +21,9 @@ class Shifter extends Dispatcher {
 
 
         this._pinchDist0 = 0;
+        this._pointerMovedX = 0;
+        this._pointerMovedY = 0;
+        this._pointerStrartTime = 0;
         this._zoomSpeed = 0.025;
         this._minZoom = .5;
         this._maxZoom = 2;
@@ -77,12 +80,9 @@ class Shifter extends Dispatcher {
         }
 
 
-
-
         this._addCSS();
 
     }
-
 
 
     _touchDown(e) {
@@ -96,8 +96,6 @@ class Shifter extends Dispatcher {
     _touchUp(e) {
 
     }
-
-
 
 
     get speedX() {
@@ -169,11 +167,15 @@ class Shifter extends Dispatcher {
 
         this._speedX = 0;
         this._speedY = 0;
+        this._pointerMoveDist = 0;
 
         if (this._disabled) return;
 
         let clientX = e.clientX;
         let clientY = e.clientY;
+
+        this._pointerMovedX = clientX;
+        this._pointerMovedY = clientY;
 
         this._setTransforms();
 
@@ -186,8 +188,9 @@ class Shifter extends Dispatcher {
         //this._target.setPointerCapture(e.pointerId);
         this._pointers.push(e);
 
-        this._target.addEventListener("pointermove", this._move, {passive: this._isPassiveEvt});
+        this._pointerStrartTime = Date.now();
 
+        this._target.addEventListener("pointermove", this._move, {passive: this._isPassiveEvt});
         this.dispatch(Shifter.Events.START, e);
 
     }
@@ -216,6 +219,7 @@ class Shifter extends Dispatcher {
         if (this._disabled) return;
 
         for (let i = this._pointers.length - 1; i >= 0; i--) {
+
             if (e.pointerId === this._pointers[i].pointerId) {
                 this._pointers.splice(i, 1);
             }
@@ -224,7 +228,20 @@ class Shifter extends Dispatcher {
         this._removeMoveListeners();
         this._unlockScroll();
         this._dispatchEnd(e);
+        this._checkClick(e);
 
+    }
+
+    _checkClick(e) {
+
+        if (Date.now() - this._pointerStrartTime > 300) return;
+
+        let x = e.clientX;
+        let y = e.clientY;
+        let dist = Math.sqrt((x - this._pointerMovedX) * (x - this._pointerMovedX) + (y - this._pointerMovedY) * (y - this._pointerMovedY));
+        if (dist < 5) {
+            this.dispatch(Shifter.Events.CLICK, e);
+        }
     }
 
     _removeMoveListeners() {
@@ -233,7 +250,7 @@ class Shifter extends Dispatcher {
     }
 
     _dispatchEnd(e) {
-        this.dispatch(Shifter.Events.END, null);
+        this.dispatch(Shifter.Events.END, e);
     }
 
     _setTransforms() {
@@ -344,6 +361,10 @@ class Shifter extends Dispatcher {
 
     }
 
+    _click(e) {
+        console.log(e)
+    }
+
 
     _applyTransforms() {
         this._target.style.transform = `
@@ -385,7 +406,8 @@ class Shifter extends Dispatcher {
 Shifter.Funcs = {
     PAN_X: "panX",
     PAN: "pan",
-    ZOOM: "zoom"
+    ZOOM: "zoom",
+    CLICK: "click",
 
 };
 
@@ -397,6 +419,7 @@ Shifter.Events = {
     START: "start",
     MOVE: "move",
     END: "end",
+    CLICK: "click",
 };
 
 Object.freeze(Shifter.Events);
