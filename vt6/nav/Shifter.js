@@ -160,6 +160,7 @@ class Shifter extends Dispatcher {
 
     remove(keepCSS = true) {
 
+        this._target.removeEventListener("wheel", this.wheelZoom);
         this._target.removeEventListener("pointermove", this._move);
         this._target.removeEventListener("pointerdown", this._down);
         window.removeEventListener("pointerup", this._up);
@@ -261,7 +262,6 @@ class Shifter extends Dispatcher {
 
     _removeMoveListeners() {
         this._target.removeEventListener("pointermove", this._move);
-        this._target.removeEventListener("wheel", this.wheelZoom);
         this._isPanningX = false;
     }
 
