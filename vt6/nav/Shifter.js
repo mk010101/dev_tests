@@ -21,6 +21,9 @@ class Shifter extends Dispatcher {
 
 
         this._pinchDist0 = 0;
+        this._pointerMovedX = 0;
+        this._pointerMovedY = 0;
+        this._pointerStrartTime = 0;
         this._zoomSpeed = 0.025;
         this._minZoom = .5;
         this._maxZoom = 2;
@@ -35,19 +38,21 @@ class Shifter extends Dispatcher {
         this._detectPanDist = 10;
         this._isPanningX = false;
 
-        this._isPassive = true;
+        this._isPassiveEvt = true;
+
+        this._pointers = [];
 
 
         // CSS
         this._cssNoScroll = "__Shifter__no-scroll_2019-15";
 
 
-        this.init(funcs);
+        this._init(funcs);
 
 
     }
 
-    init(funcs) {
+    _init(funcs) {
 
         for (let i = 0; i < funcs.length; i++) {
             let funcStr = funcs[i];
@@ -57,22 +62,38 @@ class Shifter extends Dispatcher {
         }
 
 
-        this._pointerDown = this._pointerDown.bind(this);
-        this._pointerMove = this._pointerMove.bind(this);
-        this._pointerUp = this._pointerUp.bind(this);
-        this._dispatchEnd = this._dispatchEnd.bind(this);
+        if ("PointerEvent" in window) {
 
+            this._down = this._down.bind(this);
+            this._move = this._move.bind(this);
+            this._up = this._up.bind(this);
+            this._dispatchEnd = this._dispatchEnd.bind(this);
 
+            this._target.addEventListener("pointerdown", this._down);
+            window.addEventListener("pointerup", this._up);
 
-        if ('ontouchstart' in window) {
-            this._target.addEventListener("touchstart", this._pointerDown, {passive: this._isPassive});
-            window.addEventListener("touchend", this._pointerUp, {passive: this._isPassive});
-        } else {
-            this._target.addEventListener("mousedown", this._pointerDown, {passive: this._isPassive});
-            window.addEventListener("mouseup", this._pointerUp, {passive: this._isPassive});
+        } else if ("ontouchstart" in window) {
+
+            //this._touchDown = this._touchDown.bind(this);
+            //this._target.addEventListener("touchstart", this._touchDown);
+
         }
 
+
         this._addCSS();
+
+    }
+
+
+    _touchDown(e) {
+
+    }
+
+    _touchMove(e) {
+
+    }
+
+    _touchUp(e) {
 
     }
 
@@ -119,20 +140,20 @@ class Shifter extends Dispatcher {
     }
 
     updateTransforms() {
-        this._getTransforms();
+        this._setTransforms();
     }
 
     remove(keepCSS = true) {
-        this._target.removeEventListener("mousemove", this._pointerMove);
-        this._target.removeEventListener("touchmove", this._pointerMove);
-        this._target.removeEventListener("mousedown", this._pointerDown);
-        this._target.removeEventListener("touchstart", this._pointerDown);
-        window.removeEventListener("mouseup", this._pointerUp);
-        window.removeEventListener("touchend", this._pointerUp);
+
+        this._target.removeEventListener("pointermove", this._move);
+        this._target.removeEventListener("pointerdown", this._down);
+        window.removeEventListener("pointerup", this._up);
         this._unlockScroll();
         this._target = null;
         this.offAll();
+
         if (!keepCSS) this._removeCSS();
+
     }
 
     /* =================================================================================================================
@@ -140,30 +161,23 @@ class Shifter extends Dispatcher {
      =================================================================================================================*/
 
 
-    _pointerDown(e) {
+    _down(e) {
 
         // console.log(e.timeStamp - this._lastEvtDown)
 
         this._speedX = 0;
         this._speedY = 0;
+        this._pointerMoveDist = 0;
 
         if (this._disabled) return;
 
-        let clientX, clientY;
+        let clientX = e.clientX;
+        let clientY = e.clientY;
 
-        this._isEvtTouch = e.type.indexOf("touch") > -1;
+        this._pointerMovedX = clientX;
+        this._pointerMovedY = clientY;
 
-        if (this._isEvtTouch) {
-
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-
-        } else {
-            clientX = e.clientX;
-            clientY = e.clientY;
-        }
-
-        this._getTransforms();
+        this._setTransforms();
 
         this._speedX0 = clientX;
         this._speedY0 = clientY;
@@ -171,27 +185,22 @@ class Shifter extends Dispatcher {
         this._panX0 = clientX - this._targetX;
         this._panY0 = clientY - this._targetY;
 
+        //this._target.setPointerCapture(e.pointerId);
+        this._pointers.push(e);
 
-        this._target.addEventListener("mousemove", this._pointerMove, {passive: this._isPassive});
-        this._target.addEventListener("touchmove", this._pointerMove, {passive: this._isPassive});
+        this._pointerStrartTime = Date.now();
 
+        this._target.addEventListener("pointermove", this._move, {passive: this._isPassiveEvt});
         this.dispatch(Shifter.Events.START, e);
-
-        //console.log(e)
 
     }
 
-    _pointerMove(e) {
+    _move(e) {
         if (this._disabled) return;
-        let clientX, clientY;
 
-        if (e.type.indexOf("touch") > -1) {
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        } else {
-            clientX = e.clientX;
-            clientY = e.clientY;
-        }
+
+        let clientX = e.clientX;
+        let clientY = e.clientY;
 
         this._speedX = clientX - this._speedX0;
         this._speedY = clientY - this._speedY0;
@@ -206,24 +215,45 @@ class Shifter extends Dispatcher {
     }
 
 
-    _pointerUp(e) {
+    _up(e) {
         if (this._disabled) return;
+
+        for (let i = this._pointers.length - 1; i >= 0; i--) {
+
+            if (e.pointerId === this._pointers[i].pointerId) {
+                this._pointers.splice(i, 1);
+            }
+        }
+
         this._removeMoveListeners();
         this._unlockScroll();
         this._dispatchEnd(e);
+        this._checkClick(e);
+
+    }
+
+    _checkClick(e) {
+
+        if (Date.now() - this._pointerStrartTime > 300) return;
+
+        let x = e.clientX;
+        let y = e.clientY;
+        let dist = Math.sqrt((x - this._pointerMovedX) * (x - this._pointerMovedX) + (y - this._pointerMovedY) * (y - this._pointerMovedY));
+        if (dist < 5) {
+            this.dispatch(Shifter.Events.CLICK, e);
+        }
     }
 
     _removeMoveListeners() {
-        this._target.removeEventListener("mousemove", this._pointerMove);
-        this._target.removeEventListener("touchmove", this._pointerMove);
+        this._target.removeEventListener("pointermove", this._move);
         this._isPanningX = false;
     }
 
     _dispatchEnd(e) {
-        this.dispatch(Shifter.Events.END, null);
+        this.dispatch(Shifter.Events.END, e);
     }
 
-    _getTransforms() {
+    _setTransforms() {
         let str = this._target.style.transform;
         let arr = str.split(/\s+/gmi);
         for (let i = 0; i < arr.length; i++) {
@@ -247,22 +277,14 @@ class Shifter extends Dispatcher {
      * @param e {Event} Event (touch or mouse)
      */
     panX(e) {
-        let clientX, clientY;
-        if (e.type === "touchmove") {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-                return;
-            }
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        } else {
-            clientX = e.clientX;
-            clientY = e.clientY;
+
+        if (this._pointers.length > 1) {
+            //e.preventDefault();
+            //return;
         }
 
-
-        let x = clientX - this._panX0;
-        let y = clientY - this._panY0;
+        let x = e.clientX - this._panX0;
+        let y = e.clientY - this._panY0;
 
 
         if (!this._isPanningX) {
@@ -291,22 +313,15 @@ class Shifter extends Dispatcher {
      * @param e {Event} Event (touch or mouse)
      */
     pan(e) {
-        let clientX, clientY;
-        if (e.type === "touchmove") {
-            if (e.touches.length > 1) {
-                e.preventDefault();
-                return;
-            }
-            clientX = e.touches[0].clientX;
-            clientY = e.touches[0].clientY;
-        } else {
-            clientX = e.clientX;
-            clientY = e.clientY;
+
+        if (this._pointers.length > 1) {
+            e.preventDefault();
+            return;
         }
 
 
-        let x = clientX - this._panX0;
-        let y = clientY - this._panY0;
+        let x = e.clientX - this._panX0;
+        let y = e.clientY - this._panY0;
 
         this._targetX = x;
         this._targetY = y;
@@ -320,14 +335,20 @@ class Shifter extends Dispatcher {
      */
     zoom(e) {
 
-        if (e.type.indexOf("touch") > -1 && e.touches.length === 2) {
-            let x0 = e.touches[0].clientX;
-            let x1 = e.touches[1].clientX;
-            let y0 = e.touches[0].clientY;
-            let y1 = e.touches[1].clientY;
+        if (this._pointers.length === 2) {
+
+            for (let i = 0; i < this._pointers.length; i++) {
+                if (e.pointerId === this._pointers[i].pointerId) {
+                    this._pointers[i] = e;
+                    break;
+                }
+            }
+
+            let x0 = this._pointers[0].clientX;
+            let x1 = this._pointers[1].clientX;
+            let y0 = this._pointers[0].clientY;
+            let y1 = this._pointers[1].clientY;
             let dist = Math.sqrt((x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1));
-            //let hyp = Math.hypot((x0 - x1), (y0 - y1));
-            //console.log(dist, hyp)
 
             if (dist > this._pinchDist0 && this._targetScale <= this._maxZoom) {
                 this._targetScale += this._zoomSpeed;
@@ -340,10 +361,14 @@ class Shifter extends Dispatcher {
 
     }
 
+    _click(e) {
+        console.log(e)
+    }
+
 
     _applyTransforms() {
         this._target.style.transform = `
-        translatex(${this._targetX}px) translateY(${this._targetY}px) 
+        translateX(${this._targetX}px) translateY(${this._targetY}px) 
         scaleX(${this._targetScale}) scaleY(${this._targetScale})`;
     }
 
@@ -354,8 +379,7 @@ class Shifter extends Dispatcher {
         if (!existingNoScroll) {
             let style = document.createElement('style');
             style.id = this._cssNoScroll;
-            style.innerHTML = `.${this._cssNoScroll} * { overflow: hidden }`;
-            //style.innerHTML = `.${this._cssNoScroll} * { touch-action: none; user-events: none;}`;
+            style.innerHTML = `.${this._cssNoScroll} * { overflow: hidden; }`;
             document.getElementsByTagName('head')[0].appendChild(style);
         }
     }
@@ -382,7 +406,8 @@ class Shifter extends Dispatcher {
 Shifter.Funcs = {
     PAN_X: "panX",
     PAN: "pan",
-    ZOOM: "zoom"
+    ZOOM: "zoom",
+    CLICK: "click",
 
 };
 
@@ -394,6 +419,7 @@ Shifter.Events = {
     START: "start",
     MOVE: "move",
     END: "end",
+    CLICK: "click",
 };
 
 Object.freeze(Shifter.Events);
