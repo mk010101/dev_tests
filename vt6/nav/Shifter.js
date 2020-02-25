@@ -441,7 +441,7 @@ Shifter.Events = {
 };
 
 Object.freeze(Shifter.Events);
-Object.freeze(Shifter.Funcs);
+Object.freeze(Shifter.Func);
 
 export default {Shifter}
 export {Shifter}
