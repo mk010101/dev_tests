@@ -109,18 +109,27 @@ pages.push(p);
 //-------------------------------------------------------------------------------------------
 
 
-const elMedia = document.querySelector(".media");
 
 const shifter = new Shifter(pContainer, [Shifter.Func.PAN_X]);
 
-//const shifter = new Shifter(elMedia, [Shifter.Funcs.ZOOM, Shifter.Funcs.PAN]);
-//elMedia.addEventListener("click", (e)=> console.log(e.target));
+
+
+
+
+function shiftStart() {
+
+
+
+}
+
+
+
 
 function setListeners() {
 
     shifter.on(Shifter.Events.PAN_X_START, (e) => {
 
-        //console.log(1)
+        console.log(1)
 
     });
 
@@ -128,7 +137,7 @@ function setListeners() {
         glide.remove(pContainer);
     });
 
-    shifter.on(Shifter.Events.END, () => {
+    shifter.on(Shifter.Events.ENDZZZZ, () => {
 
         if (shifter.speedX < -5) {
             addPageNext();
@@ -136,10 +145,9 @@ function setListeners() {
         } else if (shifter.speedX > 5) {
             glide.to(pContainer, 300, {t: {x: [shifter.targetX, 0]}}, {ease: glide.Ease.quadOut});
         }
-        //console.log(performance.)
+
     });
 
-    shifter.on(Shifter.Events.CLICK, e => console.log(e.target));
 }
 
 setListeners();
