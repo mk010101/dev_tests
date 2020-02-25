@@ -1,9 +1,19 @@
+/**
+ * Usage:
+ * const shifter = new Shifter(myElement, [Shifter.Func.ZOOM, Shifter.Func.PAN]);
+ * shifter.on(Shifter.Events.CLICK, e => console.log(e.target));
+ */
+
 import {Dispatcher} from "../Dispatcher.js";
 
 
 class Shifter extends Dispatcher {
 
-
+    /**
+     *
+     * @param target HtmlElement to manipulate
+     * @param funcs Array of Shifter.Func - manipulator functions
+     */
     constructor(target, funcs) {
 
         super();
@@ -58,6 +68,11 @@ class Shifter extends Dispatcher {
             let funcStr = funcs[i];
             if (this[funcStr]) {
                 this._gestures.push(funcStr);
+            }
+
+            if (funcStr === Shifter.Func.ZOOM) {
+                this.wheelZoom = this.wheelZoom.bind(this);
+                this._target.addEventListener("wheel", this.wheelZoom);
             }
         }
 
@@ -145,6 +160,7 @@ class Shifter extends Dispatcher {
 
     remove(keepCSS = true) {
 
+        this._target.removeEventListener("wheel", this.wheelZoom);
         this._target.removeEventListener("pointermove", this._move);
         this._target.removeEventListener("pointerdown", this._down);
         window.removeEventListener("pointerup", this._up);
@@ -361,8 +377,11 @@ class Shifter extends Dispatcher {
 
     }
 
-    _click(e) {
-        console.log(e)
+    wheelZoom(e) {
+
+        this._targetScale += e.deltaY * -0.001;
+        this._targetScale = Math.min(Math.max(this._minZoom, this._targetScale), this._maxZoom);
+        this._applyTransforms();
     }
 
 
@@ -403,11 +422,10 @@ class Shifter extends Dispatcher {
 
 }
 
-Shifter.Funcs = {
+Shifter.Func = {
     PAN_X: "panX",
     PAN: "pan",
     ZOOM: "zoom",
-    CLICK: "click",
 
 };
 
@@ -423,6 +441,7 @@ Shifter.Events = {
 };
 
 Object.freeze(Shifter.Events);
-Object.freeze(Shifter.Funcs);
+Object.freeze(Shifter.Func);
 
+export default {Shifter}
 export {Shifter}
