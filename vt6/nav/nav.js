@@ -72,6 +72,10 @@ class PagesViewer {
         if (this._initPos < this._pagesDataArr.length) {
             this._addPageRight(this._initPos + 1);
         }
+
+        if (this._initPos > 0) {
+            this._addPageLeft(this._initPos - 1);
+        }
     }
 
     addChild() {
@@ -90,6 +94,14 @@ class PagesViewer {
     _addPageRight(pageNumId) {
         let p = new Page(this._pagesDataArr[pageNumId]);
         p.x = this._html.getBoundingClientRect().right + this._gap;
+        p.render(this._html);
+        this._children.push(p);
+    }
+
+    _addPageLeft(pageNumId) {
+        let p = new Page(this._pagesDataArr[pageNumId]);
+        let rect = this._html.getBoundingClientRect();
+        p.x = rect.left - this._gap - rect.width;
         p.render(this._html);
         this._children.push(p);
     }
@@ -162,7 +174,7 @@ class Page {
 
 const pViewer = new PagesViewer({
     pagesData: pagesData,
-    position: 0,
+    position: 2,
     parent: document.querySelector(".pages-container")
 });
 pViewer.render(document.querySelector(".pages-container"));
