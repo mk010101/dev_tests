@@ -1,12 +1,6 @@
 import {Shifter} from "./Shifter.js";
 
 
-const gap = 50;
-
-
-
-
-
 // data stub -----------------------------------------------------------------------------------------------------------
 
 let pagesData = [];
@@ -43,23 +37,28 @@ for (let i = 0; i < 10; i++) {
 class PagesViewer {
 
 
-    constructor(dataArr, showPageNum = 0) {
+    constructor(data) {
 
         this._html = null;
-        this._pagesDataArr = dataArr;
+        this._pagesDataArr = data.pagesData;
         this._children = [];
+        this._initPos = data.position;
 
         this._shifter = null;
 
-        let p = new Page(dataArr[showPageNum]);
+        this._gap = 50;
+
+        let p = new Page(data.pagesData[data.position]);
         this._children.push(p);
+
 
         this._init();
     }
 
 
     _init() {
-
+        this._onPan = this._onPan.bind(this);
+        this._onPanEnd = this._onPanEnd.bind(this);
     }
 
     render(parent) {
@@ -67,7 +66,12 @@ class PagesViewer {
         for (let i = 0; i < this._children.length; i++) {
             this._children[i].render(this._html);
         }
+
         this._setUpShifter();
+
+        if (this._initPos < this._pagesDataArr.length) {
+            this._addPageRight(this._initPos + 1);
+        }
     }
 
     addChild() {
@@ -78,8 +82,16 @@ class PagesViewer {
     _setUpShifter() {
         this._shifter = new Shifter(this._html, [Shifter.Func.PAN_X]);
 
-        this._shifter.on(Shifter.Evt.PAN_X_START, ()=> this._onPan())
+        this._shifter.on(Shifter.Evt.PAN_X_PROGRESS, this._onPan);
+        this._shifter.on(Shifter.Evt.END, this._onPanEnd);
 
+    }
+
+    _addPageRight(pageNumId) {
+        let p = new Page(this._pagesDataArr[pageNumId]);
+        p.x = this._html.getBoundingClientRect().right + this._gap;
+        p.render(this._html);
+        this._children.push(p);
     }
 
 
@@ -87,9 +99,12 @@ class PagesViewer {
         console.log(this._html.getBoundingClientRect().right)
     }
 
+    _onPanEnd() {
+        console.log(3)
+    }
+
 
 }
-
 
 
 // Page ----------------------------------------------------------------------------------------------------------------
@@ -124,6 +139,7 @@ class Page {
         p.classList.add("page");
         p.innerHTML = str;
         this._html = p;
+        this.x = this._x;
         parent.appendChild(p)
     }
 
@@ -131,12 +147,12 @@ class Page {
         return this._html;
     }
 
-    set x (valueNum) {
+    set x(valueNum) {
         this._x = valueNum;
-        this._html.style.transform = `translateX(${valueNum}px)`;
+        if (this._html) this._html.style.transform = `translateX(${valueNum}px)`;
     }
 
-    get x () {
+    get x() {
         return this._x;
     }
 
@@ -144,10 +160,12 @@ class Page {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-const pViewer = new PagesViewer(pagesData);
+const pViewer = new PagesViewer({
+    pagesData: pagesData,
+    position: 0,
+    parent: document.querySelector(".pages-container")
+});
 pViewer.render(document.querySelector(".pages-container"));
-
-
 
 
 /*
@@ -171,17 +189,7 @@ pages.push(p);
 */
 
 
-
-
-
-
-
-
 //-------------------------------------------------------------------------------------------
-
-
-
-
 
 
 /*
