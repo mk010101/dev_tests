@@ -168,37 +168,13 @@ const pViewer = new PagesViewer({
 pViewer.render(document.querySelector(".pages-container"));
 
 
-/*
-function addPageNext() {
 
-    let lastPage = pages[pages.length - 1];
-    let id = parseInt(lastPage.position);
-    let x = lastPage.html.getBoundingClientRect().right + gap - shifter.targetX;
-
-    let newPage = new Page(id + 1);
-    newPage.html.style.transform = `translateX(${x}px)`;
-    pContainer.appendChild(newPage.html);
-    pages.push(newPage);
-}
-
-
-let p = new Page(0);
-pContainer.appendChild(p.html);
-currentPage = p;
-pages.push(p);
-*/
 
 
 //-------------------------------------------------------------------------------------------
 
 
 /*
-function shiftStart() {
-
-
-
-}
-
 
 
 
@@ -223,7 +199,6 @@ function setListeners() {
 
 }
 
-setListeners();
 
  */
 
