@@ -87,11 +87,8 @@ class Shifter extends Dispatcher {
             this._target.addEventListener("pointerdown", this._down);
             window.addEventListener("pointerup", this._up);
 
-        } else if ("ontouchstart" in window) {
-
-            //this._touchDown = this._touchDown.bind(this);
-            //this._target.addEventListener("touchstart", this._touchDown);
-
+        } else  {
+            throw ("Pointer events are not supported on your device.");
         }
 
 
@@ -99,18 +96,6 @@ class Shifter extends Dispatcher {
 
     }
 
-
-    _touchDown(e) {
-
-    }
-
-    _touchMove(e) {
-
-    }
-
-    _touchUp(e) {
-
-    }
 
 
     get speedX() {
@@ -278,7 +263,6 @@ class Shifter extends Dispatcher {
                 if (m[0] === "scaleX") this._targetScale = parseFloat(m[1]);
                 if (m[0] === "translateX") this._targetX = parseFloat(m[1]);
                 if (m[0] === "translateY") this._targetY = parseFloat(m[1]);
-                //console.log(m)
             }
         }
     }
@@ -294,10 +278,12 @@ class Shifter extends Dispatcher {
      */
     panX(e) {
 
+        /*
         if (this._pointers.length > 1) {
-            //e.preventDefault();
-            //return;
+            e.preventDefault();
+            return;
         }
+         */
 
         let x = e.clientX - this._panX0;
         let y = e.clientY - this._panY0;
@@ -317,7 +303,6 @@ class Shifter extends Dispatcher {
             }
         } else {
             this._targetX = x;
-            //console.log(clientX, this._panX0)
             this._applyTransforms();
             this.dispatch(Shifter.Events.PAN_X_PROGRESS, e);
         }

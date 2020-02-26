@@ -129,7 +129,7 @@ function setListeners() {
 
     shifter.on(Shifter.Events.PAN_X_START, (e) => {
 
-        console.log(1)
+
 
     });
 
