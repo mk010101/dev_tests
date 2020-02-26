@@ -1,12 +1,9 @@
 import {Shifter} from "./Shifter.js";
 
 
-
-const pContainer = document.querySelector(".pages-container");
 const gap = 50;
 
-let currentPage;
-let pages = [];
+
 
 
 
@@ -15,6 +12,7 @@ let pages = [];
 let pagesData = [];
 for (let i = 0; i < 10; i++) {
     let page = {
+        numId: i,
         title: "Page Title: " + (i),
         image: {
             src: "../assets/1.jpg"
@@ -44,14 +42,51 @@ for (let i = 0; i < 10; i++) {
 
 class PagesViewer {
 
-    constructor(dataArr) {
 
-        this._livePages = [];
+    constructor(dataArr, showPageNum = 0) {
+
+        this._html = null;
+        this._pagesDataArr = dataArr;
+        this._children = [];
+
+        this._shifter = null;
+
+        let p = new Page(dataArr[showPageNum]);
+        this._children.push(p);
+
+        this._init();
+    }
+
+
+    _init() {
+
     }
 
     render(parent) {
+        this._html = parent;
+        for (let i = 0; i < this._children.length; i++) {
+            this._children[i].render(this._html);
+        }
+        this._setUpShifter();
+    }
+
+    addChild() {
 
     }
+
+
+    _setUpShifter() {
+        this._shifter = new Shifter(this._html, [Shifter.Func.PAN_X]);
+
+        this._shifter.on(Shifter.Evt.PAN_X_START, ()=> this._onPan())
+
+    }
+
+
+    _onPan() {
+        console.log(this._html.getBoundingClientRect().right)
+    }
+
 
 }
 
@@ -61,20 +96,26 @@ class PagesViewer {
 
 class Page {
 
-    constructor(numId) {
-        this.numId = numId;
+    constructor(data) {
+        this.numId = data.numId;
+        this._data = data;
         this._html = "";
         this._x = 0;
-        this.init();
+        this._init();
     }
 
-    init() {
+    _init() {
+
+    }
+
+    render(parent) {
+
         let str = "";
-        let pageData = pagesData[this.numId];
-        str += `<div><h3>${pageData.title}</h3></div>
+
+        str += `<div><h3>${this._data.title}</h3></div>
         <section class="page-content">
             <div class="media"><img src="../assets/1.jpg" alt="Hello world!"><div class="hotspot"></div></div>
-            <div>${pageData.text}</div>
+            <div>${this._data.text}</div>
         </section>
     `;
 
@@ -83,6 +124,7 @@ class Page {
         p.classList.add("page");
         p.innerHTML = str;
         this._html = p;
+        parent.appendChild(p)
     }
 
     get html() {
@@ -102,12 +144,13 @@ class Page {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
-
-let lastAdded = null;
-
-
+const pViewer = new PagesViewer(pagesData);
+pViewer.render(document.querySelector(".pages-container"));
 
 
+
+
+/*
 function addPageNext() {
 
     let lastPage = pages[pages.length - 1];
@@ -125,34 +168,23 @@ let p = new Page(0);
 pContainer.appendChild(p.html);
 currentPage = p;
 pages.push(p);
+*/
 
 
 
 
-function addPage(numId) {
-
-    let newPage = new Page(numId);
-
-    if (lastAdded) {
-
-    }
 
 
-}
-
-//addPageNext();
 
 
 //-------------------------------------------------------------------------------------------
 
 
 
-const shifter = new Shifter(pContainer, [Shifter.Func.PAN_X]);
 
 
 
-
-
+/*
 function shiftStart() {
 
 
@@ -184,6 +216,8 @@ function setListeners() {
 }
 
 setListeners();
+
+ */
 
 
 

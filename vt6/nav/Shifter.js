@@ -1,7 +1,7 @@
 /**
  * Usage:
  * const shifter = new Shifter(myElement, [Shifter.Func.ZOOM, Shifter.Func.PAN]);
- * shifter.on(Shifter.Events.CLICK, e => console.log(e.target));
+ * shifter.on(Shifter.Evt.CLICK, e => console.log(e.target));
  */
 
 import {Dispatcher} from "../Dispatcher.js";
@@ -192,7 +192,7 @@ class Shifter extends Dispatcher {
         this._pointerStrartTime = Date.now();
 
         this._target.addEventListener("pointermove", this._move, {passive: this._isPassiveEvt});
-        this.dispatch(Shifter.Events.START, e);
+        this.dispatch(Shifter.Evt.START, e);
 
     }
 
@@ -212,7 +212,7 @@ class Shifter extends Dispatcher {
             this[this._gestures[i]](e);
         }
 
-        this.dispatch(Shifter.Events.MOVE, e);
+        this.dispatch(Shifter.Evt.MOVE, e);
     }
 
 
@@ -241,7 +241,7 @@ class Shifter extends Dispatcher {
         let y = e.clientY;
         let dist = Math.sqrt((x - this._pointerMovedX) * (x - this._pointerMovedX) + (y - this._pointerMovedY) * (y - this._pointerMovedY));
         if (dist < 5) {
-            this.dispatch(Shifter.Events.CLICK, e);
+            this.dispatch(Shifter.Evt.CLICK, e);
         }
     }
 
@@ -251,7 +251,7 @@ class Shifter extends Dispatcher {
     }
 
     _dispatchEnd(e) {
-        this.dispatch(Shifter.Events.END, e);
+        this.dispatch(Shifter.Evt.END, e);
     }
 
     _setTransforms() {
@@ -299,12 +299,12 @@ class Shifter extends Dispatcher {
             } else if (xa > this._detectPanDist && xa > ya) {
                 this._isPanningX = true;
                 this._lockScroll();
-                this.dispatch(Shifter.Events.PAN_X_START, e);
+                this.dispatch(Shifter.Evt.PAN_X_START, e);
             }
         } else {
             this._targetX = x;
             this._applyTransforms();
-            this.dispatch(Shifter.Events.PAN_X_PROGRESS, e);
+            this.dispatch(Shifter.Evt.PAN_X_PROGRESS, e);
         }
 
     }
@@ -414,7 +414,7 @@ Shifter.Func = {
 
 };
 
-Shifter.Events = {
+Shifter.Evt = {
     PAN_X_START: "panXStart",
     PAN_X_PROGRESS: "panXProgress",
     PAN_START: "panStart",
@@ -425,7 +425,7 @@ Shifter.Events = {
     CLICK: "click",
 };
 
-Object.freeze(Shifter.Events);
+Object.freeze(Shifter.Evt);
 Object.freeze(Shifter.Func);
 
 export default {Shifter}
