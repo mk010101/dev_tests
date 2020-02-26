@@ -42,21 +42,35 @@ for (let i = 0; i < 10; i++) {
 
 // ---------------------------------------------------------------------------------------------------------------------
 
+class PagesViewer {
+
+    constructor(dataArr) {
+
+        this._livePages = [];
+    }
+
+    render(parent) {
+
+    }
+
+}
+
 
 
 // Page ----------------------------------------------------------------------------------------------------------------
 
 class Page {
 
-    constructor(pos) {
-        this.position = pos;
+    constructor(numId) {
+        this.numId = numId;
         this._html = "";
+        this._x = 0;
         this.init();
     }
 
     init() {
         let str = "";
-        let pageData = pagesData[this.position];
+        let pageData = pagesData[this.numId];
         str += `<div><h3>${pageData.title}</h3></div>
         <section class="page-content">
             <div class="media"><img src="../assets/1.jpg" alt="Hello world!"><div class="hotspot"></div></div>
@@ -65,7 +79,7 @@ class Page {
     `;
 
         let p = document.createElement("div");
-        p.setAttribute("data-id", this.position);
+        p.setAttribute("data-id", this.numId);
         p.classList.add("page");
         p.innerHTML = str;
         this._html = p;
@@ -75,12 +89,21 @@ class Page {
         return this._html;
     }
 
+    set x (valueNum) {
+        this._x = valueNum;
+        this._html.style.transform = `translateX(${valueNum}px)`;
+    }
+
+    get x () {
+        return this._x;
+    }
+
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
 
 
-
+let lastAdded = null;
 
 
 
@@ -102,6 +125,20 @@ let p = new Page(0);
 pContainer.appendChild(p.html);
 currentPage = p;
 pages.push(p);
+
+
+
+
+function addPage(numId) {
+
+    let newPage = new Page(numId);
+
+    if (lastAdded) {
+
+    }
+
+
+}
 
 //addPageNext();
 
@@ -127,11 +164,7 @@ function shiftStart() {
 
 function setListeners() {
 
-    shifter.on(Shifter.Events.PAN_X_START, (e) => {
-
-
-
-    });
+    shifter.on(Shifter.Events.PAN_X_START, ()=> shiftStart());
 
     shifter.on(Shifter.Events.START, (e) => {
         glide.remove(pContainer);
