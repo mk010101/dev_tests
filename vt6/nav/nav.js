@@ -47,7 +47,7 @@ class PagesViewer {
 
         this._shifter = null;
 
-        this._gap = 0;
+        this._gap = 50;
 
         let p = new Page(data.pagesData[data.position]);
         this._children.push(p);
@@ -58,7 +58,7 @@ class PagesViewer {
 
 
     _init() {
-        //this._onPan = this._onPan.bind(this);
+        this._onShifterStart = this._onShifterStart.bind(this);
         this._onPanXEnd = this._onPanXEnd.bind(this);
     }
 
@@ -87,7 +87,7 @@ class PagesViewer {
     _setUpShifter() {
         this._shifter = new Shifter(this._html, [Shifter.Func.PAN_X]);
 
-        //this._shifter.on(Shifter.Evt.PAN_X_PROGRESS, this._onPan);
+        //this._shifter.on(Shifter.Evt.START, this._onShifterStart);
         this._shifter.on(Shifter.Evt.PAN_X_END, this._onPanXEnd);
 
     }
@@ -108,13 +108,15 @@ class PagesViewer {
     }
 
 
-    _onPan() {
-        //console.log(this._html.getBoundingClientRect().right)
+    _onShifterStart() {
+        glide.remove(this._html);
     }
 
     _onPanXEnd() {
 
+
         let speed = this._shifter.speedX;
+        let minSpeed = 1;
 
         let closestPage = this._children.reduce((prev, curr) => {
             return Math.abs(prev.boundsX) < Math.abs(curr.boundsX) ? prev : curr;
@@ -122,12 +124,9 @@ class PagesViewer {
         let index = this._children.indexOf(closestPage);
 
         /// User swipe slow ------
-        if (Math.abs(speed) < 5) {
-            this._move(closestPage);
-            /// User swipe fast -----
-        } else if (speed <= -5 && index < this._children.length - 1) {
+        if (speed < -minSpeed && index < this._children.length - 1) {
             this._move(this._children[index + 1]);
-        } else if (speed >= 5 && index > 0) {
+        } else if (speed > minSpeed && index > 0) {
             this._move(this._children[index - 1]);
         } else {
             this._move(closestPage);
@@ -135,7 +134,20 @@ class PagesViewer {
     }
 
     _move(page) {
-        glide.to(this._html, 300, {t: {translateX: this._html.getBoundingClientRect().left - page.boundsX}}, {ease: glide.Ease.quadOut});
+        this._shifter.disabled = true;
+        let pos = this._html.getBoundingClientRect().left - page.boundsX;
+        glide.to(this._html, 300,
+            {t: {translateX: pos}},
+            {ease: glide.Ease.quadOut})
+            .on("end", () => {
+                this._shifter.disabled = false;
+                this._curretPage = page;
+            });
+    }
+
+
+    _removeInactivePages() {
+
     }
 
 
@@ -147,6 +159,7 @@ class PagesViewer {
 class Page {
 
     constructor(data) {
+        this._parent = null;
         this.numId = data.numId;
         this._data = data;
         this._html = "";
@@ -175,7 +188,8 @@ class Page {
         p.innerHTML = str;
         this._html = p;
         this.x = this._x;
-        parent.appendChild(p)
+        parent.appendChild(p);
+        this._parent = parent;
     }
 
     get html() {
@@ -193,6 +207,11 @@ class Page {
 
     get boundsX() {
         return this._html.getBoundingClientRect().left;
+    }
+
+    dispose() {
+        this._parent.removeChild(this._html);
+        this._parent = null;
     }
 
 }
