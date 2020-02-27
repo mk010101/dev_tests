@@ -26,6 +26,8 @@ class Shifter extends Dispatcher {
         // Target transforms -------------
         this._targetX = 0;
         this._targetY = 0;
+        this._targetX0 = 0;
+        this._targetY0 = 0;
         this._targetScale = 1;
         // -------------------------------
 
@@ -33,7 +35,6 @@ class Shifter extends Dispatcher {
         this._pinchDist0 = 0;
         this._pointerMovedX = 0;
         this._pointerMovedY = 0;
-        this._pointerMovedDist = 0;
         this._pointerStrartTime = 0;
         this._zoomSpeed = 0.025;
         this._minZoom = .5;
@@ -257,16 +258,11 @@ class Shifter extends Dispatcher {
     }
 
     _checkPanned(e) {
-        let x = e.clientX;
-        let y = e.clientY;
-        let dist = Math.sqrt((x - this._pointerMovedX) * (x - this._pointerMovedX) + (y - this._pointerMovedY) * (y - this._pointerMovedY));
-        return (dist >= this._minMovedDist);
+        return (this._targetX0 !== this._targetX || this._targetY0 !== this._targetY);
     }
 
     _checkPannedX(e) {
-        let x = e.clientX;
-        let dist = Math.abs(x - this._pointerMovedX);
-        return (dist >= this._minMovedDist);
+        return this._targetX0 !== this._targetX;
     }
 
     _removeMoveListeners() {
@@ -287,6 +283,9 @@ class Shifter extends Dispatcher {
                 if (m[0] === "scaleX") this._targetScale = parseFloat(m[1]);
                 if (m[0] === "translateX") this._targetX = parseFloat(m[1]);
                 if (m[0] === "translateY") this._targetY = parseFloat(m[1]);
+
+                this._targetX0 = this._targetX;
+                this._targetY0 = this._targetY;
             }
         }
     }
