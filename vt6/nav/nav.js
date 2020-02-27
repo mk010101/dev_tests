@@ -70,7 +70,7 @@ class PagesViewer {
 
         this._setUpShifter();
 
-        if (this._initPos < this._pagesDataArr.length) {
+        if (this._initPos < this._pagesDataArr.length - 1) {
             this._addPageRight(this._initPos + 1);
         }
 
@@ -104,7 +104,7 @@ class PagesViewer {
         let rect = this._html.getBoundingClientRect();
         p.x = rect.left - this._gap - rect.width;
         p.render(this._html);
-        this._children.push(p);
+        this._children.unshift(p);
     }
 
 
@@ -116,19 +116,26 @@ class PagesViewer {
 
         let speed = this._shifter.speedX;
 
-        // User swipe slow ------
+        let closestPage = this._children.reduce((prev, curr) => {
+            return Math.abs(prev.boundsX) < Math.abs(curr.boundsX) ? prev : curr;
+        });
+        let index = this._children.indexOf(closestPage);
+
+        /// User swipe slow ------
         if (Math.abs(speed) < 5) {
-            let closestPage = this._children.reduce((prev, curr) => {
-                return Math.abs(prev.boundsX) < Math.abs(curr.boundsX) ? prev : curr;
-            });
-            glide.to(this._html, 300, {t: {translateX: this._html.getBoundingClientRect().left - closestPage.boundsX}});
-          // User swipe fast -----
+            this._move(closestPage);
+            /// User swipe fast -----
+        } else if (speed <= -5 && index < this._children.length - 1) {
+            this._move(this._children[index + 1]);
+        } else if (speed >= 5 && index > 0) {
+            this._move(this._children[index - 1]);
         } else {
-
+            this._move(closestPage);
         }
+    }
 
-
-        //console.log(closestPage)
+    _move(page) {
+        glide.to(this._html, 300, {t: {translateX: this._html.getBoundingClientRect().left - page.boundsX}}, {ease: glide.Ease.quadOut});
     }
 
 
