@@ -31,6 +31,7 @@ class Shifter extends Dispatcher {
         this._targetScale = 1;
         // -------------------------------
 
+        this._movesStack = [];
 
         this._pinchDist0 = 0;
         this._pointerMovedX = 0;
@@ -169,7 +170,7 @@ class Shifter extends Dispatcher {
 
     _down(e) {
 
-        // console.log(e.timeStamp - this._lastEvtDown)
+        this._movesStack = [];
 
         this._speedX = 0;
         this._speedY = 0;
@@ -190,6 +191,7 @@ class Shifter extends Dispatcher {
 
         this._panX0 = clientX - this._targetX;
         this._panY0 = clientY - this._targetY;
+        //this._movesStack.push({x:this._panX0, y:this._panY0});
 
         //this._target.setPointerCapture(e.pointerId);
         this._pointers.push(e);
@@ -210,6 +212,16 @@ class Shifter extends Dispatcher {
 
         this._speedX = clientX - this._speedX0;
         this._speedY = clientY - this._speedY0;
+
+        let x = e.clientX - this._panX0;
+        let y = e.clientY - this._panY0;
+
+        /*
+        this._movesStack.push({x: x, y: y});
+        if (this._movesStack.length > 1) {
+            this._movesStack.shift();
+        }
+         */
 
 
         for (let i = 0; i < this._gestures.length; i++) {
@@ -236,6 +248,13 @@ class Shifter extends Dispatcher {
 
         this._removeMoveListeners();
         this._unlockScroll();
+
+        /*
+        let reducer = (previous, current) => previous + current.x;
+        let avgX = this._movesStack.reduce(reducer, 0) / this._movesStack.length;
+        console.log(avgX)
+         */
+
         this._dispatchEnd(e);
 
         if (this._listeners[Shifter.Evt.CLICK] && this._checkClick(e)) {
