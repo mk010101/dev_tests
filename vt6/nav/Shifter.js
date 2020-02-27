@@ -35,7 +35,8 @@ class Shifter extends Dispatcher {
         this._pinchDist0 = 0;
         this._pointerMovedX = 0;
         this._pointerMovedY = 0;
-        this._pointerStrartTime = 0;
+        this._gestureStrartTime = 0;
+        this._gestureDuration = 0;
         this._zoomSpeed = 0.025;
         this._minZoom = .5;
         this._maxZoom = 2;
@@ -47,7 +48,7 @@ class Shifter extends Dispatcher {
 
         this._panX0 = 0;
         this._panY0 = 0;
-        this._detectPanDist = 10;
+        this._detectPanDist = 5;
         this._isPanningX = false;
 
         this._isPassiveEvt = true;
@@ -89,7 +90,7 @@ class Shifter extends Dispatcher {
             this._target.addEventListener("pointerdown", this._down);
             window.addEventListener("pointerup", this._up);
 
-        } else  {
+        } else {
             throw ("Pointer events are not supported on your device.");
         }
 
@@ -99,13 +100,16 @@ class Shifter extends Dispatcher {
     }
 
 
-
     get speedX() {
         return this._speedX;
     }
 
     get speedY() {
         return this._speedY;
+    }
+
+    get gestureDuration() {
+        return this._gestureDuration;
     }
 
     get targetX() {
@@ -117,8 +121,7 @@ class Shifter extends Dispatcher {
     }
 
     get targetScale() {
-        return this._targetScale
-            ;
+        return this._targetScale;
     }
 
     get disabled() {
@@ -191,7 +194,7 @@ class Shifter extends Dispatcher {
         //this._target.setPointerCapture(e.pointerId);
         this._pointers.push(e);
 
-        this._pointerStrartTime = Date.now();
+        this._gestureStrartTime = Date.now();
 
         this._target.addEventListener("pointermove", this._move, {passive: this._isPassiveEvt});
         this.dispatch(Shifter.Evt.START, e);
@@ -207,14 +210,15 @@ class Shifter extends Dispatcher {
 
         this._speedX = clientX - this._speedX0;
         this._speedY = clientY - this._speedY0;
-        this._speedX0 = clientX;
-        this._speedY0 = clientY;
+
 
         for (let i = 0; i < this._gestures.length; i++) {
             this[this._gestures[i]](e);
         }
 
         this.dispatch(Shifter.Evt.MOVE, e);
+        this._speedX0 = clientX;
+        this._speedY0 = clientY;
     }
 
 
@@ -227,6 +231,8 @@ class Shifter extends Dispatcher {
                 this._pointers.splice(i, 1);
             }
         }
+
+        this._gestureDuration = Date.now() - this._gestureStrartTime;
 
         this._removeMoveListeners();
         this._unlockScroll();
@@ -249,7 +255,7 @@ class Shifter extends Dispatcher {
 
     _checkClick(e) {
 
-        if (Date.now() - this._pointerStrartTime > 300) return false;
+        if (this._gestureDuration > 300) return false;
 
         let x = e.clientX;
         let y = e.clientY;

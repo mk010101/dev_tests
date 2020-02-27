@@ -116,7 +116,10 @@ class PagesViewer {
 
 
         let speed = this._shifter.speedX;
-        let minSpeed = 1;
+        let minSpeed = 3;
+
+        //console.log(this._shifter.gestureDuration)
+        console.log(speed)
 
         let closestPage = this._children.reduce((prev, curr) => {
             return Math.abs(prev.boundsX) < Math.abs(curr.boundsX) ? prev : curr;
