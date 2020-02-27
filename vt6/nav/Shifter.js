@@ -33,6 +33,7 @@ class Shifter extends Dispatcher {
         this._pinchDist0 = 0;
         this._pointerMovedX = 0;
         this._pointerMovedY = 0;
+        this._pointerMovedDist = 0;
         this._pointerStrartTime = 0;
         this._zoomSpeed = 0.025;
         this._minZoom = .5;
@@ -168,7 +169,7 @@ class Shifter extends Dispatcher {
 
         this._speedX = 0;
         this._speedY = 0;
-        this._pointerMoveDist = 0;
+        this._minMovedDist = 5;
 
         if (this._disabled) return;
 
@@ -229,20 +230,43 @@ class Shifter extends Dispatcher {
         this._removeMoveListeners();
         this._unlockScroll();
         this._dispatchEnd(e);
-        this._checkClick(e);
 
+        if (this._listeners[Shifter.Evt.CLICK] && this._checkClick(e)) {
+            this.dispatch(Shifter.Evt.CLICK, e);
+        }
+
+        if (this._listeners[Shifter.Evt.PAN_END] && this._checkPanned(e)) {
+            this.dispatch(Shifter.Evt.PAN_END, e);
+        }
+
+        if (this._listeners[Shifter.Evt.PAN_X_END] && this._checkPannedX(e)) {
+            this.dispatch(Shifter.Evt.PAN_X_END, e);
+        }
+
+        //console.log(this._listeners)
     }
 
     _checkClick(e) {
 
-        if (Date.now() - this._pointerStrartTime > 300) return;
+        if (Date.now() - this._pointerStrartTime > 300) return false;
 
         let x = e.clientX;
         let y = e.clientY;
         let dist = Math.sqrt((x - this._pointerMovedX) * (x - this._pointerMovedX) + (y - this._pointerMovedY) * (y - this._pointerMovedY));
-        if (dist < 5) {
-            this.dispatch(Shifter.Evt.CLICK, e);
-        }
+        return (dist < this._minMovedDist);
+    }
+
+    _checkPanned(e) {
+        let x = e.clientX;
+        let y = e.clientY;
+        let dist = Math.sqrt((x - this._pointerMovedX) * (x - this._pointerMovedX) + (y - this._pointerMovedY) * (y - this._pointerMovedY));
+        return (dist >= this._minMovedDist);
+    }
+
+    _checkPannedX(e) {
+        let x = e.clientX;
+        let dist = Math.abs(x - this._pointerMovedX);
+        return (dist >= this._minMovedDist);
     }
 
     _removeMoveListeners() {
@@ -251,7 +275,7 @@ class Shifter extends Dispatcher {
     }
 
     _dispatchEnd(e) {
-        this.dispatch(Shifter.Evt.END, e);
+        this.dispatch(Shifter.Evt.UP, e);
     }
 
     _setTransforms() {
@@ -417,16 +441,18 @@ Shifter.Func = {
 Shifter.Evt = {
     PAN_X_START: "panXStart",
     PAN_X_PROGRESS: "panXProgress",
+    PAN_X_END: "panXEnd",
     PAN_START: "panStart",
     PAN_PROGRESS: "panProgress",
+    PAN_END: "panEnd",
     START: "start",
     MOVE: "move",
-    END: "end",
+    UP: "up",
     CLICK: "click",
 };
 
 Object.freeze(Shifter.Evt);
 Object.freeze(Shifter.Func);
 
-export default {Shifter}
-export {Shifter}
+export default {Shifter};
+export {Shifter};

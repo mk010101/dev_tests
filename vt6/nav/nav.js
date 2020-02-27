@@ -32,7 +32,7 @@ for (let i = 0; i < 10; i++) {
     pagesData.push(page);
 }
 
-// ---------------------------------------------------------------------------------------------------------------------
+// PagesViewer ---------------------------------------------------------------------------------------------------------
 
 class PagesViewer {
 
@@ -87,7 +87,7 @@ class PagesViewer {
         this._shifter = new Shifter(this._html, [Shifter.Func.PAN_X]);
 
         this._shifter.on(Shifter.Evt.PAN_X_PROGRESS, this._onPan);
-        this._shifter.on(Shifter.Evt.END, this._onPanEnd);
+        this._shifter.on(Shifter.Evt.PAN_X_END, this._onPanEnd);
 
     }
 
@@ -112,7 +112,7 @@ class PagesViewer {
     }
 
     _onPanEnd() {
-        console.log(3)
+        console.log("pan X end")
     }
 
 
