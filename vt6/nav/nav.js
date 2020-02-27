@@ -43,6 +43,7 @@ class PagesViewer {
         this._pagesDataArr = data.pagesData;
         this._children = [];
         this._initPos = data.position;
+        this._curretPage = null;
 
         this._shifter = null;
 
@@ -115,13 +116,15 @@ class PagesViewer {
 
         let speed = this._shifter.speedX;
 
+        // User swipe slow ------
         if (Math.abs(speed) < 5) {
-
             let closestPage = this._children.reduce((prev, curr) => {
                 return Math.abs(prev.boundsX) < Math.abs(curr.boundsX) ? prev : curr;
             });
-
             glide.to(this._html, 300, {t: {translateX: this._html.getBoundingClientRect().left - closestPage.boundsX}});
+          // User swipe fast -----
+        } else {
+
         }
 
 
