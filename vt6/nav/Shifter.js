@@ -73,8 +73,8 @@ class Shifter extends Dispatcher {
             }
 
             if (funcStr === Shifter.Func.ZOOM) {
-                this.wheelZoom = this.wheelZoom.bind(this);
-                this._target.addEventListener("wheel", this.wheelZoom);
+                this._wheelZoom = this._wheelZoom.bind(this);
+                this._target.addEventListener("wheel", this._wheelZoom);
             }
         }
 
@@ -147,7 +147,7 @@ class Shifter extends Dispatcher {
 
     remove(keepCSS = true) {
 
-        this._target.removeEventListener("wheel", this.wheelZoom);
+        this._target.removeEventListener("wheel", this._wheelZoom);
         this._target.removeEventListener("pointermove", this._move);
         this._target.removeEventListener("pointerdown", this._down);
         window.removeEventListener("pointerup", this._up);
@@ -299,7 +299,7 @@ class Shifter extends Dispatcher {
      * Pans target on x-Axes. Uses transform.
      * @param e {Event} Event (touch or mouse)
      */
-    panX(e) {
+    _panX(e) {
 
         /*
         if (this._pointers.length > 1) {
@@ -336,7 +336,7 @@ class Shifter extends Dispatcher {
      * Pans target on x- and y- Axes. Uses transform.
      * @param e {Event} Event (touch or mouse)
      */
-    pan(e) {
+    _pan(e) {
 
         if (this._pointers.length > 1) {
             e.preventDefault();
@@ -357,7 +357,7 @@ class Shifter extends Dispatcher {
      * Zooms target. Uses transform.
      * @param e {Event} Event (touch or mouse)
      */
-    zoom(e) {
+    _zoom(e) {
 
         if (this._pointers.length === 2) {
 
@@ -385,7 +385,7 @@ class Shifter extends Dispatcher {
 
     }
 
-    wheelZoom(e) {
+    _wheelZoom(e) {
 
         this._targetScale += e.deltaY * -0.001;
         this._targetScale = Math.min(Math.max(this._minZoom, this._targetScale), this._maxZoom);
@@ -431,9 +431,9 @@ class Shifter extends Dispatcher {
 }
 
 Shifter.Func = {
-    PAN_X: "panX",
-    PAN: "pan",
-    ZOOM: "zoom",
+    PAN_X: "_panX",
+    PAN: "_pan",
+    ZOOM: "_zoom",
 
 };
 

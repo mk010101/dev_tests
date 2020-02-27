@@ -57,8 +57,8 @@ class PagesViewer {
 
 
     _init() {
-        this._onPan = this._onPan.bind(this);
-        this._onPanEnd = this._onPanEnd.bind(this);
+        //this._onPan = this._onPan.bind(this);
+        this._onPanXEnd = this._onPanXEnd.bind(this);
     }
 
     render(parent) {
@@ -86,8 +86,8 @@ class PagesViewer {
     _setUpShifter() {
         this._shifter = new Shifter(this._html, [Shifter.Func.PAN_X]);
 
-        this._shifter.on(Shifter.Evt.PAN_X_PROGRESS, this._onPan);
-        this._shifter.on(Shifter.Evt.PAN_X_END, this._onPanEnd);
+        //this._shifter.on(Shifter.Evt.PAN_X_PROGRESS, this._onPan);
+        this._shifter.on(Shifter.Evt.PAN_X_END, this._onPanXEnd);
 
     }
 
@@ -108,11 +108,16 @@ class PagesViewer {
 
 
     _onPan() {
-        console.log(this._html.getBoundingClientRect().right)
+        //console.log(this._html.getBoundingClientRect().right)
     }
 
-    _onPanEnd() {
-        console.log("pan X end")
+    _onPanXEnd() {
+
+        let closestPage = this._children.reduce((prev, curr) => {
+            return Math.abs(prev.boundsX) < Math.abs(curr.boundsX) ? prev : curr;
+        });
+
+        console.log(closestPage)
     }
 
 
@@ -168,6 +173,10 @@ class Page {
         return this._x;
     }
 
+    get boundsX() {
+        return this._html.getBoundingClientRect().left;
+    }
+
 }
 
 // ---------------------------------------------------------------------------------------------------------------------
@@ -178,9 +187,6 @@ const pViewer = new PagesViewer({
     parent: document.querySelector(".pages-container")
 });
 pViewer.render(document.querySelector(".pages-container"));
-
-
-
 
 
 //-------------------------------------------------------------------------------------------
