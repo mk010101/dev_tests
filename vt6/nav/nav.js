@@ -46,7 +46,7 @@ class PagesViewer {
 
         this._shifter = null;
 
-        this._gap = 50;
+        this._gap = 0;
 
         let p = new Page(data.pagesData[data.position]);
         this._children.push(p);
@@ -113,11 +113,19 @@ class PagesViewer {
 
     _onPanXEnd() {
 
-        let closestPage = this._children.reduce((prev, curr) => {
-            return Math.abs(prev.boundsX) < Math.abs(curr.boundsX) ? prev : curr;
-        });
+        let speed = this._shifter.speedX;
 
-        console.log(closestPage)
+        if (Math.abs(speed) < 5) {
+
+            let closestPage = this._children.reduce((prev, curr) => {
+                return Math.abs(prev.boundsX) < Math.abs(curr.boundsX) ? prev : curr;
+            });
+
+            glide.to(this._html, 300, {t: {translateX: this._html.getBoundingClientRect().left - closestPage.boundsX}});
+        }
+
+
+        //console.log(closestPage)
     }
 
 
