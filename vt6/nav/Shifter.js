@@ -90,6 +90,8 @@ class Shifter extends Dispatcher {
 
             this._target.addEventListener("pointerdown", this._down);
             window.addEventListener("pointerup", this._up);
+            window.addEventListener("pointercancel", (e)=> {console.log("cancel")}, {passive: this._isPassiveEvt});
+            window.addEventListener("pointerout", (e)=> {console.log("out")}, {passive: this._isPassiveEvt});
 
         } else {
             throw ("Pointer events are not supported on your device.");
@@ -170,6 +172,8 @@ class Shifter extends Dispatcher {
 
     _down(e) {
 
+        if (this._disabled) return;
+
         this._movesStack = [];
 
         this._speedX = 0;
@@ -231,10 +235,13 @@ class Shifter extends Dispatcher {
         this.dispatch(Shifter.Evt.MOVE, e);
         this._speedX0 = clientX;
         this._speedY0 = clientY;
+
+        console.log(this._pointers.length, "---")
     }
 
 
     _up(e) {
+        console.log("shifter.up")
         if (this._disabled) return;
 
         for (let i = this._pointers.length - 1; i >= 0; i--) {
@@ -267,6 +274,7 @@ class Shifter extends Dispatcher {
 
         if (this._listeners[Shifter.Evt.PAN_X_END] && this._checkPannedX(e)) {
             this.dispatch(Shifter.Evt.PAN_X_END, e);
+            console.log("pan x end")
         }
 
         //console.log(this._listeners)
@@ -341,18 +349,22 @@ class Shifter extends Dispatcher {
 
             let xa = Math.abs(x - this._targetX);
             let ya = Math.abs(y);
+            console.log(1)
 
-            if (ya > this._detectPanDist && ya > xa) {
+            if (ya > this._detectPanDist && ya * 2 > xa) {
                 this._removeMoveListeners();
-            } else if (xa > this._detectPanDist && xa > ya) {
+                console.log(2)
+            } else if (xa > this._detectPanDist && xa > ya * 2) {
                 this._isPanningX = true;
                 this._lockScroll();
                 this.dispatch(Shifter.Evt.PAN_X_START, e);
+                console.log(3)
             }
         } else {
             this._targetX = x;
             this._applyTransforms();
             this.dispatch(Shifter.Evt.PAN_X_PROGRESS, e);
+            console.log(4)
         }
 
     }
